@@ -8,3 +8,30 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE settings
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Large files
+*.mp4
+*.avi
+*.mov
+*.flv
+*.mkv
+*.wmv
+
+
+docs/*
+Audit_Reports/*
+alembic.ini
+
