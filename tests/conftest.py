@@ -9,6 +9,7 @@ that is rolled back at teardown.
 import os
 
 import pytest
+from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -32,7 +33,11 @@ def _configure_blindlog(monkeypatch):
 
 @pytest.fixture
 def db_session() -> Session:
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
     @event.listens_for(engine, "connect")
     def _enable_fk(dbapi_connection, _connection_record):

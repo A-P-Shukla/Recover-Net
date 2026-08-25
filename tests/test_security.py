@@ -1,4 +1,10 @@
-"""Unit tests for BlindLog secret handling and fail-closed masking."""
+import sys
+from pathlib import Path
+
+# Ensure project root is on sys.path when running script directly
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import pytest
 
@@ -94,3 +100,8 @@ def test_logger_cache_is_keyed_by_secret():
     a_again = mask_email(email, secret_key="secret-alpha-key")
     assert a != b
     assert a == a_again
+
+
+if __name__ == "__main__":
+    import pytest
+    sys.exit(pytest.main(["-s", __file__]))

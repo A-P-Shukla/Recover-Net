@@ -1,4 +1,10 @@
-"""ORM tests for Transaction ingestion, masking, and internal primary keys."""
+import sys
+from pathlib import Path
+
+# Ensure project root is on sys.path when running script directly
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 import uuid
 from decimal import Decimal
@@ -135,3 +141,8 @@ def test_session_rollback_isolates_tests(db_session):
     """Sanity check that the transactional fixture starts empty."""
     count = db_session.scalar(select(Transaction))
     assert count is None
+
+
+if __name__ == "__main__":
+    import pytest
+    sys.exit(pytest.main(["-s", __file__]))
