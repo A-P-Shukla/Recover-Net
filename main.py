@@ -4,7 +4,8 @@ main.py
 FastAPI application for Recover-Net.
 Includes:
 - BlindLog ASGI Middleware attached to intercept and mask request/response logs.
-- POST /webhook/payment-failure endpoint to ingest failure events with BlindLog hashing.
+- POST /webhook/payment-failure          — ingest failure events (PII masked).
+- POST /webhook/payment-failure/recover  — full pipeline: ingest → classify → guardrail → audit.
 """
 
 import logging
@@ -17,7 +18,8 @@ from sqlalchemy.orm import Session
 from blindlog.integrations.fastapi import BlindLogFastAPIMiddleware
 from database import get_db
 from models import Transaction
-from security import get_blind_logger, require_blindlog_secret
+from security import MaskingError, get_blind_logger, require_blindlog_secret
+from workflow import RecoveryResult, run_recovery_pipeline
 
 # Configure logging to output at INFO level so BlindLog middleware logs to terminal
 logging.basicConfig(
@@ -82,6 +84,56 @@ def payment_failure_webhook(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error processing webhook: {str(e)}",
+        )
+
+
+@app.post("/webhook/payment-failure/recover", status_code=status.HTTP_201_CREATED)
+def payment_failure_recover(
+    payload: Dict[str, Any],
+    db: Session = Depends(get_db),
+):
+    """
+    Full recovery pipeline: ingest → Groq classify → guardrail → audit log.
+
+    Returns the guardrail-validated recovery action and full decision provenance.
+    """
+    try:
+        result: RecoveryResult = run_recovery_pipeline(payload, db)
+        return {
+            "status": "success",
+            "transaction_id": str(result.transaction_id),
+            "audit_log_id": str(result.audit_log_id),
+            "llm_proposed_intent": result.llm_intent,
+            "llm_confidence": result.llm_confidence,
+            "final_intent": result.final_intent,
+            "final_status": result.final_status,
+            "guardrail_overridden": result.overridden,
+            "rule_applied": result.rule_applied,
+        }
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail=str(e),
+        )
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Transaction '{payload.get('transaction_id')}' has already been processed.",
+        )
+    except MaskingError as e:
+        db.rollback()
+        logger.error("Masking hard-stop: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="PII masking failed — request rejected for security.",
+        )
+    except Exception as e:
+        db.rollback()
+        logger.error("Recovery pipeline failed: %s", e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error: {str(e)}",
         )
 
 
