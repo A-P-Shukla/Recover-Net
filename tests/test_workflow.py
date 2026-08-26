@@ -124,6 +124,10 @@ class TestHappyPath:
         assert result.final_status == "EMI_OFFERED"
 
     def test_escalate_pass_through(self, db_session: Session):
+        """
+        fraud_suspected where LLM already chose escalate.
+        Rule fires (rule_applied is set) but overridden=False.
+        """
         result = run_recovery_pipeline(
             _fresh_payload(
                 error_code="fraud_suspected",

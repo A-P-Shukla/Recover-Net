@@ -21,6 +21,7 @@ import pytest
 
 from guardrail import (
     RULE_FRAUD_ESCALATE,
+    RULE_INVALID_CVV_ESCALATE,
     RULE_HIGH_RISK_ESCALATE,
     RULE_TIMEOUT_EMI_CORRECT,
     GuardrailResult,
@@ -58,12 +59,12 @@ class TestFraudEscalate:
         assert result.overridden is True
         assert result.rule_applied == RULE_FRAUD_ESCALATE
 
-    def test_fraud_already_escalate_passes_through(self):
-        """AI correctly chose escalate_to_human — rule must not fire."""
+    def test_fraud_already_escalate_not_overridden(self):
+        """LLM correctly chose escalate_to_human — rule fires but overridden=False."""
         result = evaluate_action(_tx(error_code="fraud_suspected"), intent="escalate_to_human")
         assert result.final_intent == "escalate_to_human"
         assert result.overridden is False
-        assert result.rule_applied is None
+        assert result.rule_applied == RULE_FRAUD_ESCALATE
 
     def test_non_fraud_error_code_does_not_trigger_rule(self):
         result = evaluate_action(_tx(error_code="insufficient_funds"), intent="retry_now")
@@ -71,7 +72,36 @@ class TestFraudEscalate:
 
 
 # ---------------------------------------------------------------------------
-# Rule 2 — RULE_HIGH_RISK_ESCALATE
+# Rule 2 — RULE_INVALID_CVV_ESCALATE
+# ---------------------------------------------------------------------------
+
+class TestInvalidCvvEscalate:
+    def test_invalid_cvv_with_retry_is_overridden(self):
+        result = evaluate_action(_tx(error_code="invalid_cvv"), intent="retry_now")
+        assert result.final_intent == "escalate_to_human"
+        assert result.overridden is True
+        assert result.rule_applied == RULE_INVALID_CVV_ESCALATE
+
+    def test_invalid_cvv_with_emi_is_overridden(self):
+        result = evaluate_action(_tx(error_code="invalid_cvv"), intent="offer_emi")
+        assert result.final_intent == "escalate_to_human"
+        assert result.overridden is True
+        assert result.rule_applied == RULE_INVALID_CVV_ESCALATE
+
+    def test_invalid_cvv_already_escalate_not_overridden(self):
+        """LLM correctly chose escalate — rule enforced but overridden=False."""
+        result = evaluate_action(_tx(error_code="invalid_cvv"), intent="escalate_to_human")
+        assert result.final_intent == "escalate_to_human"
+        assert result.overridden is False
+        assert result.rule_applied == RULE_INVALID_CVV_ESCALATE
+
+    def test_non_cvv_error_code_does_not_trigger_rule(self):
+        result = evaluate_action(_tx(error_code="gateway_timeout"), intent="retry_now")
+        assert result.rule_applied != RULE_INVALID_CVV_ESCALATE
+
+
+# ---------------------------------------------------------------------------
+# Rule 3 — RULE_HIGH_RISK_ESCALATE
 # ---------------------------------------------------------------------------
 
 class TestHighRiskEscalate:
@@ -84,6 +114,16 @@ class TestHighRiskEscalate:
         assert result.overridden is True
         assert result.rule_applied == RULE_HIGH_RISK_ESCALATE
         assert result.original_intent == "offer_emi"
+
+    def test_high_risk_already_escalate_not_overridden(self):
+        """LLM correctly chose escalate — rule enforced but overridden=False."""
+        result = evaluate_action(
+            _tx(error_code="insufficient_funds", amount=50_000, past_success_rate=0.05),
+            intent="escalate_to_human",
+        )
+        assert result.final_intent == "escalate_to_human"
+        assert result.overridden is False
+        assert result.rule_applied == RULE_HIGH_RISK_ESCALATE
 
     def test_boundary_amount_exactly_10000_does_not_trigger(self):
         """Amount must be strictly > 10000, not >=."""
@@ -102,7 +142,6 @@ class TestHighRiskEscalate:
         assert result.rule_applied != RULE_HIGH_RISK_ESCALATE
 
     def test_high_amount_good_success_rate_passes_through(self):
-        """High amount but good history — rule must not fire."""
         result = evaluate_action(
             _tx(error_code="insufficient_funds", amount=50_000, past_success_rate=0.75),
             intent="offer_emi",
@@ -111,7 +150,6 @@ class TestHighRiskEscalate:
         assert result.overridden is False
 
     def test_missing_success_rate_does_not_trigger(self):
-        """None past_success_rate means we can't assert risk — don't escalate blindly."""
         result = evaluate_action(
             {"error_code": "insufficient_funds", "amount": 50_000, "past_success_rate": None},
             intent="offer_emi",
@@ -119,7 +157,6 @@ class TestHighRiskEscalate:
         assert result.rule_applied != RULE_HIGH_RISK_ESCALATE
 
     def test_decimal_amount_is_handled(self):
-        """Decimal amounts from SQLAlchemy Numeric columns must not raise."""
         result = evaluate_action(
             _tx(error_code="insufficient_funds", amount=Decimal("20000.00"), past_success_rate=0.05),
             intent="retry_now",
@@ -129,7 +166,7 @@ class TestHighRiskEscalate:
 
 
 # ---------------------------------------------------------------------------
-# Rule 3 — RULE_TIMEOUT_EMI_CORRECT
+# Rule 4 — RULE_TIMEOUT_EMI_CORRECT
 # ---------------------------------------------------------------------------
 
 class TestTimeoutEmiCorrect:
@@ -141,7 +178,6 @@ class TestTimeoutEmiCorrect:
         assert result.original_intent == "offer_emi"
 
     def test_gateway_timeout_with_retry_now_passes_through(self):
-        """AI correctly chose retry — should not be touched."""
         result = evaluate_action(_tx(error_code="gateway_timeout"), intent="retry_now")
         assert result.final_intent == "retry_now"
         assert result.overridden is False
@@ -152,7 +188,6 @@ class TestTimeoutEmiCorrect:
         assert result.overridden is False
 
     def test_non_timeout_offer_emi_passes_through(self):
-        """offer_emi on insufficient_funds is legitimate — rule must not fire."""
         result = evaluate_action(
             _tx(error_code="insufficient_funds", amount=500, past_success_rate=0.6),
             intent="offer_emi",
@@ -162,25 +197,25 @@ class TestTimeoutEmiCorrect:
 
 
 # ---------------------------------------------------------------------------
-# Rule priority — Rule 1 wins over Rule 2
+# Rule priority
 # ---------------------------------------------------------------------------
 
 class TestRulePriority:
     def test_fraud_takes_priority_over_high_risk(self):
-        """
-        A transaction that matches both Rule 1 (fraud) and Rule 2 (high amount +
-        low success rate) must be handled by Rule 1 — the higher-priority rule.
-        """
         result = evaluate_action(
-            {
-                "error_code": "fraud_suspected",
-                "amount": 50_000,
-                "past_success_rate": 0.05,
-            },
+            {"error_code": "fraud_suspected", "amount": 50_000, "past_success_rate": 0.05},
             intent="retry_now",
         )
         assert result.final_intent == "escalate_to_human"
-        assert result.rule_applied == RULE_FRAUD_ESCALATE  # not RULE_HIGH_RISK_ESCALATE
+        assert result.rule_applied == RULE_FRAUD_ESCALATE
+
+    def test_invalid_cvv_takes_priority_over_high_risk(self):
+        result = evaluate_action(
+            {"error_code": "invalid_cvv", "amount": 50_000, "past_success_rate": 0.05},
+            intent="retry_now",
+        )
+        assert result.final_intent == "escalate_to_human"
+        assert result.rule_applied == RULE_INVALID_CVV_ESCALATE
 
 
 # ---------------------------------------------------------------------------
@@ -210,21 +245,16 @@ class TestPassThrough:
 
 class TestEdgeCases:
     def test_missing_keys_default_safely(self):
-        """evaluate_action must not raise when optional keys are absent."""
         result = evaluate_action({}, intent="retry_now")
         assert result.final_intent == "retry_now"
         assert result.overridden is False
 
     def test_error_code_is_case_insensitive(self):
-        """error_code comparison is lowercased internally."""
-        result = evaluate_action(
-            _tx(error_code="FRAUD_SUSPECTED"), intent="retry_now"
-        )
+        result = evaluate_action(_tx(error_code="FRAUD_SUSPECTED"), intent="retry_now")
         assert result.final_intent == "escalate_to_human"
         assert result.rule_applied == RULE_FRAUD_ESCALATE
 
     def test_result_is_immutable(self):
-        """GuardrailResult is a frozen dataclass — mutation must raise."""
         result = evaluate_action(_tx(), intent="retry_now")
         with pytest.raises((AttributeError, TypeError)):
             result.final_intent = "offer_emi"  # type: ignore[misc]
