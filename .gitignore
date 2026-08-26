@@ -33,3 +33,4 @@ logs/
 
 docs/*
 Audit_Reports/*
+!alembic.ini
