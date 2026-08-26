@@ -68,9 +68,17 @@ class RecoveryDecision(BaseModel):
 
 
 def get_groq_client() -> Groq:
-    """Initializes and returns a native Groq client."""
-    api_key = os.getenv("GROQ_API_KEY")
-    return Groq(api_key=api_key)
+    """
+    Initializes and returns a native Groq client.
+    Fails closed if GROQ_API_KEY is missing or empty.
+    A per-request timeout of 30 s is set to prevent hung workers.
+    """
+    api_key = os.getenv("GROQ_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError(
+            "GROQ_API_KEY is not set. Cannot make Groq API calls."
+        )
+    return Groq(api_key=api_key, timeout=30.0)
 
 
 def classify_payment_failure(

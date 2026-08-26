@@ -193,9 +193,11 @@ def run_recovery_pipeline(
     db.add(audit_log)
 
     # ------------------------------------------------------------------
-    # Step 5 — Commit atomically: both rows or neither
+    # Step 5 — Stage complete: caller commits atomically
+    # db.commit() is intentionally NOT called here. Commit responsibility
+    # belongs to the HTTP boundary (main.py) so the session lifecycle and
+    # rollback behaviour are controlled in one place.
     # ------------------------------------------------------------------
-    db.commit()
     db.refresh(tx)
     db.refresh(audit_log)
 

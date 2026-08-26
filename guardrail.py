@@ -14,6 +14,20 @@ Usage:
     # result.final_intent  -> the safe, validated action
     # result.overridden    -> True if the guardrail corrected the AI
     # result.rule_applied  -> name of the rule that fired, or None
+
+Rule priority (highest → lowest):
+    1. RULE_FRAUD_ESCALATE      — fraud_suspected always routes to human review.
+    2. RULE_INVALID_CVV_ESCALATE — repeated CVV failures always route to human review.
+    3. RULE_HIGH_RISK_ESCALATE  — large amount + poor history → human review.
+    4. RULE_TIMEOUT_EMI_CORRECT — gateway timeout cannot offer EMI.
+
+Notes:
+    - Rules 1 and 2 only fire (override=True) when the LLM did NOT already
+      propose escalate_to_human. If the LLM got it right, the rule still
+      enforces the outcome but overridden=False to avoid inflating audit stats.
+    - Rule 3 similarly sets overridden=False when the LLM already escalated.
+    - A high-amount + low-history + gateway_timeout payload hits Rule 3 before
+      Rule 4: escalating is the safer outcome and is acceptable.
 """
 
 from dataclasses import dataclass
@@ -25,6 +39,7 @@ from classifier import RecoveryIntent
 # Rule identifiers — used in audit logs so every override is traceable
 # ---------------------------------------------------------------------------
 RULE_FRAUD_ESCALATE = "RULE_FRAUD_ESCALATE"
+RULE_INVALID_CVV_ESCALATE = "RULE_INVALID_CVV_ESCALATE"
 RULE_HIGH_RISK_ESCALATE = "RULE_HIGH_RISK_ESCALATE"
 RULE_TIMEOUT_EMI_CORRECT = "RULE_TIMEOUT_EMI_CORRECT"
 
@@ -39,10 +54,10 @@ class GuardrailResult:
     Immutable result returned by evaluate_action().
 
     Attributes:
-        final_intent:   The validated, safe action to execute.
-        overridden:     True when the guardrail corrected the AI's proposal.
-        rule_applied:   Identifier of the rule that fired, or None if the AI
-                        was correct and no override was necessary.
+        final_intent:    The validated, safe action to execute.
+        overridden:      True when the guardrail changed the AI's proposed intent.
+                         False when the AI was already correct (rule enforced, not corrected).
+        rule_applied:    Identifier of the rule that fired, or None if no rule matched.
         original_intent: The intent proposed by the AI before guardrail evaluation.
     """
 
@@ -70,11 +85,6 @@ def evaluate_action(
     Rules are evaluated in priority order — the first match wins and the
     remaining rules are skipped to keep the logic unambiguous.
 
-    Rule priority (highest → lowest):
-        1. RULE_FRAUD_ESCALATE      — fraud always routes to human review
-        2. RULE_HIGH_RISK_ESCALATE  — large amount + poor history → human review
-        3. RULE_TIMEOUT_EMI_CORRECT — gateway timeout cannot offer EMI
-
     Parameters:
         transaction_data: Raw or sanitized transaction dict.  Expected keys:
                           - error_code (str)
@@ -91,32 +101,49 @@ def evaluate_action(
 
     # ------------------------------------------------------------------
     # Rule 1 — Fraud suspected: never retry or offer EMI on a stolen card
+    # overridden=True only when the LLM missed it; avoids inflating stats
+    # when the LLM correctly escalated.
     # ------------------------------------------------------------------
-    if error_code == "fraud_suspected" and intent != "escalate_to_human":
+    if error_code == "fraud_suspected":
+        already_correct = intent == "escalate_to_human"
         return GuardrailResult(
             final_intent="escalate_to_human",
-            overridden=True,
+            overridden=not already_correct,
             rule_applied=RULE_FRAUD_ESCALATE,
             original_intent=intent,
         )
 
     # ------------------------------------------------------------------
-    # Rule 2 — High-value transaction with very poor success history
+    # Rule 2 — Invalid CVV: repeated card security failures go to human review
+    # ------------------------------------------------------------------
+    if error_code == "invalid_cvv":
+        already_correct = intent == "escalate_to_human"
+        return GuardrailResult(
+            final_intent="escalate_to_human",
+            overridden=not already_correct,
+            rule_applied=RULE_INVALID_CVV_ESCALATE,
+            original_intent=intent,
+        )
+
+    # ------------------------------------------------------------------
+    # Rule 3 — High-value transaction with very poor success history
+    # overridden=False when the LLM already chose escalate_to_human.
     # ------------------------------------------------------------------
     if (
         amount > HIGH_RISK_AMOUNT_THRESHOLD
         and past_success_rate is not None
         and past_success_rate < HIGH_RISK_SUCCESS_RATE_CEILING
     ):
+        already_correct = intent == "escalate_to_human"
         return GuardrailResult(
             final_intent="escalate_to_human",
-            overridden=True,
+            overridden=not already_correct,
             rule_applied=RULE_HIGH_RISK_ESCALATE,
             original_intent=intent,
         )
 
     # ------------------------------------------------------------------
-    # Rule 3 — Gateway timeout cannot result in an EMI offer
+    # Rule 4 — Gateway timeout cannot result in an EMI offer
     # ------------------------------------------------------------------
     if error_code == "gateway_timeout" and intent == "offer_emi":
         return GuardrailResult(
