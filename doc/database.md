@@ -1,6 +1,6 @@
 # Database Reference
 
-Recover-Net uses PostgreSQL 16. The schema has two tables: `transactions` and `audit_logs`. Every pipeline run produces exactly one row in each table, committed atomically.
+Recover-Net uses PostgreSQL 16. The schema has three tables: `transactions`, `merchant_policies`, and `audit_logs`. Every pipeline run produces one transaction and one audit row, committed atomically.
 
 ---
 
@@ -18,6 +18,11 @@ error_code            VARCHAR(100)  timestamp            TIMESTAMPTZ
 past_success_rate     FLOAT
 raw_payload           JSONB
 created_at            TIMESTAMPTZ
+
+merchant_policies
+────────────────────────────────
+merchant_id           VARCHAR(100) (PK)
+max_discount_allowed  NUMERIC(5,2)
 ```
 
 `audit_logs.transaction_id` is a foreign key with `ON DELETE CASCADE` — deleting a transaction removes its audit logs.
@@ -34,6 +39,7 @@ Stores the ingested webhook event. PII fields are pseudonymized before any data 
 |---|---|---|---|---|
 | `transaction_id` | `UUID` | No | `uuid4()` | Internal primary key. Always generated server-side. Never taken from the inbound webhook. |
 | `source_transaction_id` | `VARCHAR(64)` | Yes | — | Your external transaction ID, stored as-is. Enforced unique via `uq_transactions_source_transaction_id`. |
+| `merchant_id` | `VARCHAR(100)` | No | `default` | Merchant whose financial policy gates the recovery action. |
 | `user_email` | `VARCHAR(255)` | No | — | BlindLog-pseudonymized email. The raw value is never stored. |
 | `phone` | `VARCHAR(100)` | No | — | BlindLog-pseudonymized phone number. The raw value is never stored. |
 | `amount` | `NUMERIC(12,2)` | No | — | Transaction amount. Two decimal places of precision. |
@@ -51,6 +57,7 @@ Stores the ingested webhook event. PII fields are pseudonymized before any data 
 | `ix_transactions_user_email` | `user_email` | B-tree |
 | `ix_transactions_phone` | `phone` | B-tree |
 | `ix_transactions_error_code` | `error_code` | B-tree |
+| `ix_transactions_merchant_id` | `merchant_id` | B-tree |
 
 `user_email` and `phone` are indexed on their pseudonymized values, so you can look up a user's transaction history using the masked token without ever needing the raw PII.
 
@@ -68,7 +75,7 @@ None of these checks can be disabled.
 ### Example row
 
 ```sql
-SELECT transaction_id, source_transaction_id, user_email, phone, amount, error_code, past_success_rate, created_at
+SELECT transaction_id, source_transaction_id, merchant_id, user_email, phone, amount, error_code, past_success_rate, created_at
 FROM transactions
 LIMIT 1;
 ```
@@ -86,6 +93,17 @@ created_at            | 2026-08-25 06:30:12.345678+00
 
 ---
 
+## Table: `merchant_policies`
+
+Stores the merchant-configured financial ceiling used by the deterministic guardrail.
+
+| Column | Type | Nullable | Default | Description |
+|---|---|---|---|---|
+| `merchant_id` | `VARCHAR(100)` | No | — | Policy key referenced by `transactions.merchant_id`. |
+| `max_discount_allowed` | `NUMERIC(5,2)` | No | `10.00` | Maximum EMI interest discount percentage. |
+
+The migration seeds the `default` merchant policy at 10%. A missing merchant policy also fails safe to the 10% application default; configure an explicit row for each merchant in production.
+
 ## Table: `audit_logs`
 
 Stores the full decision provenance for every pipeline run. One row per transaction processed through `POST /webhook/payment-failure/recover`. Immutable once written — no update path exists in the application.
@@ -98,6 +116,8 @@ Stores the full decision provenance for every pipeline run. One row per transact
 | `transaction_id` | `UUID` | No | — | Foreign key to `transactions.transaction_id`. |
 | `llm_proposed_action` | `TEXT` | Yes | — | JSON-serialized `RecoveryDecision`. The raw LLM output before guardrail evaluation. |
 | `guardrail_decision` | `TEXT` | Yes | — | JSON-serialized `GuardrailResult`. The guardrail's verdict including override details. |
+| `action` | `VARCHAR(20)` | No | `APPROVED` | Guardrail outcome: `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
+| `modified_parameters` | `JSONB` | Yes | — | Proposed, applied, and maximum allowed values when a parameter is clamped. |
 | `final_status` | `VARCHAR(50)` | No | — | The final outcome label: `RETRIED`, `EMI_OFFERED`, or `ESCALATED`. |
 | `timestamp` | `TIMESTAMPTZ` | No | `now()` | Decision timestamp. Set by the database server. |
 
@@ -139,11 +159,25 @@ JSON string stored in `TEXT`. Always parseable as:
 }
 ```
 
+For a financial modification, the audit row also contains:
+
+```json
+{
+  "action": "MODIFIED",
+  "modified_parameters": {
+    "parameter": "discount",
+    "proposed": 15.0,
+    "applied": 10.0,
+    "max_allowed": 10.0
+  }
+}
+```
+
 | Field | Type | Description |
 |---|---|---|
 | `final_intent` | string | The validated action after guardrail evaluation. |
 | `overridden` | boolean | `true` if the guardrail changed the LLM's proposed intent. |
-| `rule_applied` | string \| null | The rule that fired (`RULE_FRAUD_ESCALATE`, `RULE_HIGH_RISK_ESCALATE`, `RULE_TIMEOUT_EMI_CORRECT`), or `null` if no rule fired. |
+| `rule_applied` | string \| null | The rule that fired, including `RULE_DISCOUNT_CLAMP`, or `null` if no rule fired. |
 | `original_intent` | string | What the LLM proposed before guardrail evaluation. Equal to `final_intent` when `overridden` is `false`. |
 
 ### `final_status` values
@@ -154,10 +188,12 @@ JSON string stored in `TEXT`. Always parseable as:
 | `EMI_OFFERED` | EMI installment plan was offered to the user. |
 | `ESCALATED` | Transaction was routed to human review. |
 
+`action` is independent of `final_status`: a clamped EMI remains `EMI_OFFERED`, but its audit action is `MODIFIED`.
+
 ### Example row
 
 ```sql
-SELECT log_id, transaction_id, llm_proposed_action::json, guardrail_decision::json, final_status, timestamp
+SELECT log_id, transaction_id, llm_proposed_action::json, guardrail_decision::json, action, modified_parameters, final_status, timestamp
 FROM audit_logs
 WHERE transaction_id = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 ```
@@ -221,6 +257,7 @@ uv run alembic history
 | Revision | Description |
 |---|---|
 | `0001_initial` | Creates `transactions` and `audit_logs` tables with all indexes and constraints. |
+| `0002_dynamic_policies` | Adds `merchant_policies`, `transactions.merchant_id`, and audit modification fields; seeds the 10% default ceiling. |
 
 The migration uses PostgreSQL-native types (`postgresql.UUID`, `postgresql.JSONB`) directly. If you need to run against a different database for testing, the ORM models use `with_variant()` to fall back to generic SQLAlchemy types automatically.
 

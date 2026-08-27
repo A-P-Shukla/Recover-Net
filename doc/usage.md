@@ -43,7 +43,7 @@ uv run alembic upgrade head
 **Start the API server**
 
 ```bash
-uv run uvicorn main:app --reload --port 8000
+uv run uvicorn recover_net.core.app:app --reload --port 8000
 ```
 
 The server is ready when you see:
@@ -100,6 +100,7 @@ Both endpoints accept the same payload shape:
   "transaction_id": "txn_abc123",
   "user_email": "user@example.com",
   "phone": "+919876543210",
+  "merchant_id": "merchant-acme",
   "amount": 4999.00,
   "error_code": "insufficient_funds",
   "past_success_rate": 0.82
@@ -107,6 +108,8 @@ Both endpoints accept the same payload shape:
 ```
 
 **`transaction_id`** — Your own identifier for this transaction. Stored as `source_transaction_id` in the database. If you send the same value twice, the second request returns HTTP 409. You can omit this field if you don't have an external ID.
+
+**`merchant_id`** — Optional policy key. Defaults to `default`. The merchant policy controls the maximum EMI discount the guardrail may apply.
 
 **`user_email`** and **`phone`** — These are required and are immediately pseudonymized. The raw values are never stored or logged.
 
@@ -131,16 +134,25 @@ A successful call to `POST /webhook/payment-failure/recover` returns:
   "audit_log_id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
   "llm_proposed_intent": "offer_emi",
   "llm_confidence": 0.91,
-  "final_intent": "escalate_to_human",
-  "final_status": "ESCALATED",
-  "guardrail_overridden": true,
-  "rule_applied": "RULE_HIGH_RISK_ESCALATE"
+  "final_intent": "offer_emi",
+  "final_status": "EMI_OFFERED",
+  "guardrail_overridden": false,
+  "rule_applied": "RULE_DISCOUNT_CLAMP",
+  "action": "MODIFIED",
+  "modified_parameters": {
+    "parameter": "discount",
+    "proposed": 15.0,
+    "applied": 10.0,
+    "max_allowed": 10.0
+  }
 }
 ```
 
 **What to act on:** `final_intent` is the validated action. Always use this, not `llm_proposed_intent`.
 
 **What happened to the LLM:** `llm_proposed_intent` shows what the classifier originally recommended. If `guardrail_overridden` is `true`, the guardrail disagreed and `final_intent` is different.
+
+**What happened to parameters:** `action` is `MODIFIED` when a financial parameter was clamped. For EMI discounts, always use `modified_parameters.applied`, never the LLM's proposed value.
 
 **For audit purposes:** `transaction_id` and `audit_log_id` are the UUIDs you should store on your side. Both rows exist in the database and can be queried.
 
@@ -151,6 +163,14 @@ A successful call to `POST /webhook/payment-failure/recover` returns:
 | `retry_now` | Retry the charge immediately. The failure was likely transient. |
 | `offer_emi` | Present the user with an installment payment option. The card likely has insufficient funds but the user has good history. |
 | `escalate_to_human` | Route to your support or fraud team. Do not retry automatically. |
+
+### Interpreting `action`
+
+| Value | Meaning |
+|---|---|
+| `APPROVED` | The proposed intent and parameters passed policy checks. |
+| `MODIFIED` | The intent was retained, but one or more parameters were bounded by merchant policy. |
+| `OVERRIDDEN` | A safety rule replaced the proposed intent. |
 
 ### Interpreting `final_status`
 
@@ -203,7 +223,7 @@ For bulk replay, load testing, or proving guardrail behavior at scale, use the b
 **Step 1: Generate a test batch**
 
 ```bash
-uv run python generate_batch.py
+uv run python scripts/generate_batch.py
 ```
 
 This produces `batch_payload.json` with 75 records:
@@ -218,16 +238,16 @@ The 40% dangerous payload is intentional to demonstrate that the guardrail catch
 Make sure the server is running first, then:
 
 ```bash
-uv run python batch_runner.py
+uv run python scripts/batch_runner.py
 ```
 
 **Options:**
 
 ```bash
-uv run python batch_runner.py --url http://localhost:8000   # default
-uv run python batch_runner.py --concurrency 10              # default is 5
-uv run python batch_runner.py --batch custom_batch.json     # custom batch file
-uv run python batch_runner.py --report-json results.json    # save full results
+uv run python scripts/batch_runner.py --url http://localhost:8000   # default
+uv run python scripts/batch_runner.py --concurrency 10              # default is 5
+uv run python scripts/batch_runner.py --batch custom_batch.json     # custom batch file
+uv run python scripts/batch_runner.py --report-json results.json    # save full results
 ```
 
 **Why the default concurrency is 5**
@@ -237,16 +257,29 @@ Groq's free tier allows approximately 30 requests per minute. With 5 concurrent 
 If you have a paid Groq plan, you can increase concurrency:
 
 ```bash
-uv run python batch_runner.py --concurrency 20
+uv run python scripts/batch_runner.py --concurrency 20
 ```
 
 **Generating random test data (not for batch)**
 
 ```bash
-uv run python generate_mock_data.py
+uv run python scripts/generate_mock_data.py
 ```
 
-This produces `failed_webhooks.json` with 50 random records using realistic Indian names, phone numbers, and email addresses. Useful for ad-hoc testing, not the structured guardrail proof that `generate_batch.py` produces.
+This produces `failed_webhooks.json` with 50 random records using realistic Indian names, phone numbers, and email addresses. Useful for ad-hoc testing, not the structured guardrail proof that `scripts/generate_batch.py` produces.
+
+### Configure merchant policies
+
+The `merchant_policies` table controls financial action limits. The migration creates a `default` policy with a 10% maximum discount. Configure a merchant-specific ceiling with SQL:
+
+```sql
+INSERT INTO merchant_policies (merchant_id, max_discount_allowed)
+VALUES ('merchant-acme', 10.00)
+ON CONFLICT (merchant_id) DO UPDATE
+SET max_discount_allowed = EXCLUDED.max_discount_allowed;
+```
+
+Send that policy key as `merchant_id` in the webhook. If the LLM proposes a 15% EMI discount and the ceiling is 10%, the API returns `action: "MODIFIED"` and the applied discount is 10%. The request is not rejected and the clamp is recorded in `audit_logs.modified_parameters`.
 
 ---
 
@@ -274,7 +307,7 @@ uv run pytest -s
 
 Test coverage spans:
 - `test_classifier.py` — schema validation, all 3 intents, PII leak prevention, error paths
-- `test_guardrail.py` — all 3 rules, both sides of every boundary, rule priority, pass-through
+- `test_guardrail.py` — safety rules, financial discount clamping, boundaries, priority, pass-through
 - `test_models.py` — ORM validators, `from_webhook()`, masking enforcement, replay prevention
 - `test_security.py` — `mask_email`, `mask_phone`, `mask_payload`, missing secret handling
 - `test_webhook.py` — FastAPI endpoint integration, PII in logs assertions
@@ -302,6 +335,6 @@ Always send your gateway's transaction ID as `transaction_id`. Recover-Net enfor
 
 The `audit_log_id` in the response is the immutable record of what Recover-Net decided and why. Store it against your transaction in case you need to investigate a decision later.
 
-**Act on `final_intent`, not `llm_proposed_intent`**
+**Act on `final_intent` and bounded parameters, not raw LLM output**
 
-The guardrail may have overridden the LLM. `final_intent` is always the safe, validated action. If you act on `llm_proposed_intent` when `guardrail_overridden` is `true`, you are bypassing the safety layer.
+The guardrail may override the LLM or modify its parameters. `final_intent` is always the safe, validated action. When `action` is `MODIFIED`, use `modified_parameters.applied`; using the proposed discount bypasses the financial safety layer.
