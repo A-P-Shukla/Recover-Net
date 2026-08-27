@@ -1,16 +1,18 @@
+import importlib
 from logging.config import fileConfig
-import os
+from typing import Any, cast
 
-from alembic import context
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
+from recover_net.db.session import DATABASE_URL, Base
+
 load_dotenv()
 
-from database import DATABASE_URL, Base  # noqa: E402
-import models  # noqa: E402, F401
+importlib.import_module("recover_net.db.models")
 
-config = context.config
+alembic_context = cast(Any, importlib.import_module("alembic.context"))
+config = alembic_context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL.replace("%", "%%"))
 
 if config.config_file_name is not None:
@@ -21,14 +23,14 @@ target_metadata = Base.metadata
 
 def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
-    context.configure(
+    alembic_context.configure(
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
-    with context.begin_transaction():
-        context.run_migrations()
+    with alembic_context.begin_transaction():
+        alembic_context.run_migrations()
 
 
 def run_migrations_online() -> None:
@@ -38,12 +40,12 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
-        with context.begin_transaction():
-            context.run_migrations()
+        alembic_context.configure(connection=connection, target_metadata=target_metadata)
+        with alembic_context.begin_transaction():
+            alembic_context.run_migrations()
 
 
-if context.is_offline_mode():
+if alembic_context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()

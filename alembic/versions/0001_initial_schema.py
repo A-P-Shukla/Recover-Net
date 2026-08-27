@@ -5,11 +5,14 @@ Revises:
 Create Date: 2026-08-24
 
 """
+import importlib
 from typing import Sequence, Union
+from typing import Any, cast
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+op = cast(Any, importlib.import_module("alembic.op"))
 
 revision: str = "0001_initial"
 down_revision: Union[str, Sequence[str], None] = None
