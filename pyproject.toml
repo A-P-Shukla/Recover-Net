@@ -12,6 +12,7 @@ dependencies = [
     "groq>=0.13.0",
     "psycopg2-binary>=2.9.12",
     "python-dotenv>=1.2.3",
+    "rich>=15.0.0",
     "sqlalchemy>=2.0.52",
     "uvicorn>=0.52.4",
 ]
