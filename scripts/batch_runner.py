@@ -25,6 +25,12 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, cast
 
 import aiohttp
+from rich.console import Console
+from rich.live import Live
+from rich.panel import Panel
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.table import Table
+from rich.text import Text
 
 # ---------------------------------------------------------------------------
 # Config defaults
@@ -37,6 +43,7 @@ REQUEST_TIMEOUT     = 60          # seconds per request
 BATCH_FILE          = "batch_payload.json"
 RETRY_ATTEMPTS      = 3           # retry on 429/5xx before giving up
 RETRY_BACKOFF       = 2.0         # seconds to wait before each retry
+console = Console()
 
 
 # ---------------------------------------------------------------------------
@@ -56,6 +63,8 @@ class TxResult:
     guardrail_overridden: Optional[bool] = None
     rule_applied: Optional[str]   = None
     error: Optional[str]          = None
+    audit_log_id: Optional[str]    = None
+    action: Optional[str]          = None
 
     @property
     def success(self) -> bool:
@@ -64,6 +73,12 @@ class TxResult:
     @property
     def was_escalated(self) -> bool:
         return self.final_intent == "escalate_to_human"
+
+    @property
+    def outcome(self) -> str:
+        if not self.success:
+            return "FAILED"
+        return "BLOCKED" if self.was_escalated else "RECOVERED"
 
 
 @dataclass
@@ -138,6 +153,8 @@ async def send_webhook(
                             llm_intent           = body.get("llm_proposed_intent"),
                             guardrail_overridden = body.get("guardrail_overridden"),
                             rule_applied         = body.get("rule_applied"),
+                            audit_log_id         = body.get("audit_log_id"),
+                            action               = body.get("action"),
                         )
 
                     # Retry on rate-limit or transient server errors
@@ -193,18 +210,34 @@ async def run_batch(
     semaphore = asyncio.Semaphore(concurrency)
     timeout   = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
 
-    print(f"Target      : {url}")
-    print(f"Batch       : {len(transactions)} transactions")
-    print(f"Concurrency : {concurrency} simultaneous requests  (retries: {RETRY_ATTEMPTS}x, backoff: {RETRY_BACKOFF}s)")
-    print("Firing …\n")
+    console.print(Panel.fit(
+        "[bold cyan]RECOVER-NET[/bold cyan]  [white]Concurrent Recovery Run[/white]",
+        subtitle=f"{len(transactions)} transactions | concurrency {concurrency}",
+        border_style="cyan",
+    ))
 
     start = time.perf_counter()
     async with aiohttp.ClientSession(timeout=timeout) as session:
-        tasks = [
-            send_webhook(session, semaphore, url, tx)
-            for tx in transactions
-        ]
-        results: List[TxResult] = await asyncio.gather(*tasks)
+        progress = Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("{task.completed}/{task.total}"),
+            TimeElapsedColumn(),
+            console=console,
+        )
+        progress_task = progress.add_task(
+            "[cyan]Processing webhooks", total=len(transactions)
+        )
+
+        async def send_with_progress(transaction: Dict[str, Any]) -> TxResult:
+            result = await send_webhook(session, semaphore, url, transaction)
+            progress.advance(progress_task)
+            return result
+
+        with Live(progress, console=console, refresh_per_second=10):
+            tasks = [send_with_progress(tx) for tx in transactions]
+            results: List[TxResult] = await asyncio.gather(*tasks)
     elapsed = time.perf_counter() - start
 
     return _aggregate(results, elapsed)
@@ -293,9 +326,6 @@ def _inr(amount: float) -> str:
 
 
 def print_report(report: BatchReport) -> None:
-    W  = 53   # inner width
-    SEP = "=" * W
-
     n_retry     = report.intent_counts.get("retry_now", 0)
     n_emi       = report.intent_counts.get("offer_emi", 0)
     n_escalated = report.intent_counts.get("escalate_to_human", 0)
@@ -311,35 +341,41 @@ def print_report(report: BatchReport) -> None:
         if report.succeeded > 0 else 0.0
     )
 
-    def row(label: str, value: str) -> None:
-        # Fixed 36-char label field, value right-fills to W
-        print(f"  {label:<36} : {value}")
+    summary = Table.grid(padding=(0, 2))
+    summary.add_column(style="dim")
+    summary.add_column(justify="right")
+    summary.add_row("Processed", f"[bold]{report.succeeded}/{report.total}[/bold]")
+    summary.add_row("Value at risk", f"[bold yellow]{_inr(report.total_value_at_risk)}[/bold yellow]")
+    summary.add_row("Recovered", f"[bold green]{n_retry + n_emi}[/bold green]  ({_inr(value_recovered)})")
+    summary.add_row("Revenue secured", f"[bold green]{pct_recovered:.1f}%[/bold green]")
+    summary.add_row("Blocked", f"[bold red]{n_escalated}[/bold red]")
+    summary.add_row("Guardrail overrides", str(report.guardrail_overrides))
+    summary.add_row("Elapsed", f"{report.elapsed_seconds:.2f}s  [dim]~{avg_latency_ms:.0f}ms/request[/dim]")
+    console.print(Panel(summary, title="[bold]Run summary[/bold]", border_style="green"))
 
-    print()
-    print(SEP)
-    print("      RECOVER-NET: BATCH EXECUTION REPORT")
-    print(SEP)
-    row("Total Failed Transactions Processed", str(report.succeeded))
-    row("Total Value at Risk",                 _inr(report.total_value_at_risk))
-    row("Processing Time",                     f"{report.elapsed_seconds:.2f} seconds")
-    row("Average Latency per Webhook",
-        f"~{avg_latency_ms:.0f} ms (via Groq LPUs)")
-    print()
-    print("  --- REVENUE RECOVERED ---")
-    row("Recovered via Automated Retry",
-        f"{n_retry} ({_inr(report.value_retried)})")
-    row("Recovered via EMI Intervention",
-        f"{n_emi} ({_inr(report.value_emi)})")
-    row("Total Revenue Secured",
-        f"{_inr(value_recovered)} ({pct_recovered:.1f}%)")
-    print()
-    print("  --- COMPLIANCE & ESCALATION ---")
-    row("Escalated to Human Review",           str(n_escalated))
-    row("Fraud Attempts Blocked by Guardrail", str(report.fraud_blocked))
-    row("PII Leaks Detected in Logs",
-        "0 (Secured via BlindLog)")
-    print(SEP)
-    print()
+    table = Table(title="Decision ledger", header_style="bold cyan", expand=False)
+    table.add_column("Outcome", justify="center")
+    table.add_column("Transaction")
+    table.add_column("Intent")
+    table.add_column("Rule / action")
+    table.add_column("Audit ref", style="dim")
+    table.add_column("Amount", justify="right")
+    for result in report.results:
+        outcome_style = {"RECOVERED": "green", "BLOCKED": "red", "FAILED": "yellow"}[result.outcome]
+        outcome = Text(result.outcome, style=f"bold {outcome_style}")
+        transaction_id = result.transaction_id[:12]
+        audit_ref = result.audit_log_id[:12] if result.audit_log_id else "-"
+        rule = result.rule_applied or result.action or "-"
+        table.add_row(outcome, transaction_id, result.final_intent or "-", rule, audit_ref, _inr(result.amount))
+    console.print(table)
+
+    if report.rule_counts:
+        rules = Table(title="Guardrail activity", header_style="bold magenta")
+        rules.add_column("Rule")
+        rules.add_column("Hits", justify="right")
+        for rule, count in sorted(report.rule_counts.items()):
+            rules.add_row(rule, str(count))
+        console.print(rules)
 
 
 # ---------------------------------------------------------------------------
@@ -404,6 +440,8 @@ def main() -> None:
                     "llm_intent":          r.llm_intent,
                     "guardrail_overridden":r.guardrail_overridden,
                     "rule_applied":        r.rule_applied,
+                    "audit_log_id":        r.audit_log_id,
+                    "action":              r.action,
                     "error":               r.error,
                 }
                 for r in report.results
