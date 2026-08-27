@@ -8,6 +8,7 @@ and BlindLog ASGI middleware logging.
 import json
 import logging
 import sys
+from typing import Any, Dict, Generator
 from pathlib import Path
 
 # Ensure project root is on sys.path when running script directly
@@ -17,15 +18,16 @@ if str(ROOT_DIR) not in sys.path:
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 
-from database import get_db
-from main import app
+from recover_net.db.session import get_db
+from recover_net.core.app import app
 
 
 @pytest.fixture
-def client(db_session):
+def client(db_session: Session) -> Generator[TestClient, None, None]:
     """FastAPI TestClient wired to the transactional test database session."""
-    def _override_get_db():
+    def _override_get_db() -> Generator[Session, None, None]:
         yield db_session
 
     app.dependency_overrides[get_db] = _override_get_db
@@ -34,7 +36,9 @@ def client(db_session):
     app.dependency_overrides.clear()
 
 
-def test_payment_failure_webhook_endpoint_logs_masked_pii(client, caplog):
+def test_payment_failure_webhook_endpoint_logs_masked_pii(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
     """
     Fires a mock webhook payload from failed_webhooks.json at the endpoint.
     Verifies that:
@@ -47,7 +51,7 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(client, caplog):
     with open(mock_file, "r", encoding="utf-8") as f:
         mock_payloads = json.load(f)
 
-    sample_payload = dict(mock_payloads[0])
+    sample_payload: Dict[str, Any] = dict(mock_payloads[0])
     raw_email = sample_payload["user_email"]
     raw_phone = sample_payload["phone"]
 
@@ -81,9 +85,9 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(client, caplog):
     assert raw_phone not in captured_logs, f"Security Violation: Raw phone {raw_phone} was found in terminal logs!"
 
 
-def test_payment_failure_webhook_rejects_duplicate_transaction(client):
+def test_payment_failure_webhook_rejects_duplicate_transaction(client: TestClient) -> None:
     """Verifies that replaying an existing webhook transaction_id returns 409 Conflict."""
-    payload = {
+    payload: Dict[str, Any] = {
         "transaction_id": "duplicate-test-id-1234",
         "user_email": "dup.user@example.com",
         "phone": "+919876543210",
@@ -100,9 +104,9 @@ def test_payment_failure_webhook_rejects_duplicate_transaction(client):
     assert "already been processed" in res2.json()["detail"]
 
 
-def test_payment_failure_webhook_rejects_missing_fields(client):
+def test_payment_failure_webhook_rejects_missing_fields(client: TestClient) -> None:
     """Verifies that requests missing required fields fail gracefully."""
-    invalid_payload = {
+    invalid_payload: Dict[str, Any] = {
         "amount": 500,
         "error_code": "invalid_cvv",
     }

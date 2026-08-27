@@ -11,6 +11,7 @@ in-memory SQLite database via the shared db_session fixture.
 import json
 import sys
 import uuid
+from typing import Any, Dict
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -22,15 +23,15 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from models import AuditLog, Transaction
-from workflow import RecoveryResult, _INTENT_TO_STATUS, run_recovery_pipeline
+from recover_net.db.models import AuditLog, MerchantPolicy, Transaction
+from recover_net.engine.pipeline import INTENT_TO_STATUS, run_recovery_pipeline
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-BASE_PAYLOAD = {
+BASE_PAYLOAD: Dict[str, Any] = {
     "transaction_id": "aabbccdd-0000-0000-0000-111111111111",
     "user_email": "test.user@example.com",
     "phone": "+919876543210",
@@ -40,10 +41,15 @@ BASE_PAYLOAD = {
 }
 
 
-def _mock_groq_client(intent: str, confidence: float = 0.90) -> MagicMock:
+def _mock_groq_client(
+    intent: str, confidence: float = 0.90, discount: float | None = None
+) -> MagicMock:
     """Build a mock Groq client that returns the given intent and confidence."""
     mock_message = MagicMock()
-    mock_message.content = json.dumps({"intent": intent, "confidence": confidence})
+    response: Dict[str, Any] = {"intent": intent, "confidence": confidence}
+    if discount is not None:
+        response["discount"] = discount
+    mock_message.content = json.dumps(response)
     mock_client = MagicMock()
     mock_client.chat.completions.create.return_value = MagicMock(
         choices=[MagicMock(message=mock_message)]
@@ -51,9 +57,9 @@ def _mock_groq_client(intent: str, confidence: float = 0.90) -> MagicMock:
     return mock_client
 
 
-def _fresh_payload(**overrides) -> dict:
+def _fresh_payload(**overrides: Any) -> Dict[str, Any]:
     """Return a copy of BASE_PAYLOAD with a unique transaction_id each call."""
-    p = {**BASE_PAYLOAD, "transaction_id": str(uuid.uuid4())}
+    p: Dict[str, Any] = {**BASE_PAYLOAD, "transaction_id": str(uuid.uuid4())}
     p.update(overrides)
     return p
 
@@ -235,6 +241,8 @@ class TestDatabaseWrites:
             groq_client=_mock_groq_client("retry_now", confidence=0.77),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
+        assert log is not None
+        assert isinstance(log.llm_proposed_action, str)
         proposed = json.loads(log.llm_proposed_action)
         assert proposed["intent"] == "retry_now"
         assert proposed["confidence"] == 0.77
@@ -246,6 +254,8 @@ class TestDatabaseWrites:
             groq_client=_mock_groq_client("retry_now"),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
+        assert log is not None
+        assert isinstance(log.guardrail_decision, str)
         decision = json.loads(log.guardrail_decision)
         assert decision["overridden"] is True
         assert decision["rule_applied"] == "RULE_FRAUD_ESCALATE"
@@ -260,6 +270,8 @@ class TestDatabaseWrites:
             groq_client=_mock_groq_client("retry_now"),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
+        assert log is not None
+        assert isinstance(log.guardrail_decision, str)
         decision = json.loads(log.guardrail_decision)
         assert decision["overridden"] is False
         assert decision["rule_applied"] is None
@@ -271,7 +283,39 @@ class TestDatabaseWrites:
             groq_client=_mock_groq_client("retry_now"),
         )
         tx = db_session.get(Transaction, result.transaction_id)
+        assert tx is not None
         assert any(str(log.log_id) == str(result.audit_log_id) for log in tx.audit_logs)
+
+    def test_merchant_policy_clamps_discount_and_audits_modification(
+        self, db_session: Session
+    ):
+        db_session.add(
+            MerchantPolicy(merchant_id="merchant-acme", max_discount_allowed=8.0)
+        )
+        db_session.flush()
+        result = run_recovery_pipeline(
+            _fresh_payload(
+                merchant_id="merchant-acme",
+                error_code="insufficient_funds",
+                amount=35_000,
+            ),
+            db_session,
+            groq_client=_mock_groq_client("offer_emi", discount=15.0),
+        )
+
+        assert result.action == "MODIFIED"
+        assert result.final_intent == "offer_emi"
+        assert result.modified_parameters == {
+            "parameter": "discount",
+            "proposed": 15.0,
+            "applied": 8.0,
+            "max_allowed": 8.0,
+        }
+
+        log = db_session.get(AuditLog, result.audit_log_id)
+        assert log is not None
+        assert log.action == "MODIFIED"
+        assert log.modified_parameters == result.modified_parameters
 
 
 # ---------------------------------------------------------------------------
@@ -281,12 +325,12 @@ class TestDatabaseWrites:
 class TestIntentToStatus:
     def test_all_intents_have_status_labels(self):
         for intent in ("retry_now", "offer_emi", "escalate_to_human"):
-            assert intent in _INTENT_TO_STATUS
+            assert intent in INTENT_TO_STATUS
 
     def test_status_labels_are_correct(self):
-        assert _INTENT_TO_STATUS["retry_now"] == "RETRIED"
-        assert _INTENT_TO_STATUS["offer_emi"] == "EMI_OFFERED"
-        assert _INTENT_TO_STATUS["escalate_to_human"] == "ESCALATED"
+        assert INTENT_TO_STATUS["retry_now"] == "RETRIED"
+        assert INTENT_TO_STATUS["offer_emi"] == "EMI_OFFERED"
+        assert INTENT_TO_STATUS["escalate_to_human"] == "ESCALATED"
 
 
 # ---------------------------------------------------------------------------
@@ -296,8 +340,8 @@ class TestIntentToStatus:
 class TestRecoverEndpoint:
     @pytest.fixture
     def client(self, db_session: Session):
-        from main import app
-        from database import get_db
+        from recover_net.core.app import app
+        from recover_net.db.session import get_db
 
         app.dependency_overrides[get_db] = lambda: db_session
         yield TestClient(app, raise_server_exceptions=False)
@@ -305,8 +349,8 @@ class TestRecoverEndpoint:
 
     def test_recover_endpoint_returns_201_on_success(self, client: TestClient):
         payload = _fresh_payload(error_code="gateway_timeout", amount=500)
-        with patch("workflow.classify_payment_failure") as mock_classify:
-            from classifier import RecoveryDecision
+        with patch("recover_net.engine.pipeline.classify_payment_failure") as mock_classify:
+            from recover_net.llm.classifier import RecoveryDecision
             mock_classify.return_value = RecoveryDecision(intent="retry_now", confidence=0.91)
             response = client.post("/webhook/payment-failure/recover", json=payload)
 
@@ -321,8 +365,8 @@ class TestRecoverEndpoint:
 
     def test_recover_endpoint_returns_guardrail_override_fields(self, client: TestClient):
         payload = _fresh_payload(error_code="fraud_suspected", amount=500)
-        with patch("workflow.classify_payment_failure") as mock_classify:
-            from classifier import RecoveryDecision
+        with patch("recover_net.engine.pipeline.classify_payment_failure") as mock_classify:
+            from recover_net.llm.classifier import RecoveryDecision
             mock_classify.return_value = RecoveryDecision(intent="retry_now", confidence=0.80)
             response = client.post("/webhook/payment-failure/recover", json=payload)
 

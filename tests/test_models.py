@@ -1,4 +1,5 @@
 import sys
+from typing import Any, Dict
 from pathlib import Path
 
 # Ensure project root is on sys.path when running script directly
@@ -12,14 +13,15 @@ from decimal import Decimal
 import pytest
 from sqlalchemy import inspect, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
-from database import Base
-from models import AuditLog, Transaction
-from security import MaskingError
+from recover_net.db.session import Base
+from recover_net.db.models import AuditLog, Transaction
+from recover_net.core.security import MaskingError
 
 
-def _webhook(**overrides):
-    data = {
+def _webhook(**overrides: Any) -> Dict[str, Any]:
+    data: Dict[str, Any] = {
         "transaction_id": str(uuid.uuid4()),
         "user_email": "aditya.sharma770@protonmail.com",
         "phone": "+916798479837",
@@ -31,7 +33,7 @@ def _webhook(**overrides):
     return data
 
 
-def test_init_db_registers_model_tables(db_session):
+def test_init_db_registers_model_tables(db_session: Session) -> None:
     assert "transactions" in Base.metadata.tables
     assert "audit_logs" in Base.metadata.tables
     inspector = inspect(db_session.get_bind())
@@ -39,7 +41,7 @@ def test_init_db_registers_model_tables(db_session):
     assert "audit_logs" in inspector.get_table_names()
 
 
-def test_from_webhook_does_not_use_inbound_id_as_pk(db_session):
+def test_from_webhook_does_not_use_inbound_id_as_pk(db_session: Session) -> None:
     inbound = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
     tx = Transaction.from_webhook(_webhook(transaction_id=inbound))
     db_session.add(tx)
@@ -50,7 +52,7 @@ def test_from_webhook_does_not_use_inbound_id_as_pk(db_session):
     assert isinstance(tx.transaction_id, uuid.UUID)
 
 
-def test_from_webhook_masks_columns_and_payload(db_session):
+def test_from_webhook_masks_columns_and_payload(db_session: Session) -> None:
     raw = _webhook()
     tx = Transaction.from_webhook(raw)
     db_session.add(tx)
@@ -74,7 +76,7 @@ def test_from_webhook_does_not_fall_back_to_raw_pii():
     assert raw["phone"] not in str(tx.raw_payload)
 
 
-def test_validators_always_mask_spoofed_prefixes(db_session):
+def test_validators_always_mask_spoofed_prefixes(db_session: Session) -> None:
     tx = Transaction(
         user_email="attacker@masked.com",
         phone="blind:+919876543210",
@@ -97,7 +99,7 @@ def test_empty_email_rejected():
         )
 
 
-def test_duplicate_source_transaction_id_is_rejected(db_session):
+def test_duplicate_source_transaction_id_is_rejected(db_session: Session) -> None:
     inbound = str(uuid.uuid4())
     first = Transaction.from_webhook(_webhook(transaction_id=inbound, user_email="one@example.com"))
     second = Transaction.from_webhook(_webhook(transaction_id=inbound, user_email="two@example.com"))
@@ -108,7 +110,7 @@ def test_duplicate_source_transaction_id_is_rejected(db_session):
         db_session.flush()
 
 
-def test_audit_log_relationship(db_session):
+def test_audit_log_relationship(db_session: Session) -> None:
     tx = Transaction.from_webhook(_webhook())
     db_session.add(tx)
     db_session.flush()
@@ -137,7 +139,7 @@ def test_from_webhook_requires_email_and_phone():
         Transaction.from_webhook(_webhook(phone=None))
 
 
-def test_session_rollback_isolates_tests(db_session):
+def test_session_rollback_isolates_tests(db_session: Session) -> None:
     """Sanity check that the transactional fixture starts empty."""
     count = db_session.scalar(select(Transaction))
     assert count is None
