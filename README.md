@@ -234,7 +234,7 @@ Recover-Net returns standard HTTP error codes with a `detail` field.
 
 ## Batch processing
 
-For load testing or bulk replay, use the included batch runner. It fires transactions concurrently using `asyncio` + `aiohttp` and prints a summary report.
+For load testing or bulk replay, use the included batch runner. It fires transactions concurrently using `asyncio` + `aiohttp`, renders live Rich progress, and prints a colored decision ledger with audit references.
 
 **Generate a test batch**
 
@@ -324,8 +324,6 @@ All email addresses and phone numbers are pseudonymized using [BlindLog](https:/
 | `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
 | `modified_parameters` | JSON | Proposed, applied, and maximum allowed values for a clamped parameter. |
 | `final_status` | string | `RETRIED`, `EMI_OFFERED`, or `ESCALATED`. |
-| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
-| `modified_parameters` | object | Policy clamp details, including proposed, applied, and maximum allowed values. |
 | `timestamp` | timestamp | Decision time (server default). |
 
 ---
