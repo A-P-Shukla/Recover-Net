@@ -19,7 +19,7 @@ A payment failure event arrives as a webhook. Recover-Net runs it through a four
 Inbound webhook
     → BlindLog PII masking          (email + phone pseudonymized before any processing)
     → Groq LLM classifier           (intent: retry_now | offer_emi | escalate_to_human)
-    → Deterministic guardrail       (hard rules override the LLM when it cannot be trusted)
+    → Dynamic policy guardrail       (hard rules override or modify bounded financial actions)
     → Immutable audit log write     (full decision provenance committed atomically)
 ```
 
@@ -63,7 +63,7 @@ uv run alembic upgrade head
 **4. Start the server**
 
 ```bash
-uv run uvicorn main:app --reload
+uv run uvicorn recover_net.core.app:app --reload
 ```
 
 The API is now running at `http://localhost:8000`.
@@ -106,6 +106,7 @@ Stores the event in the database with PII masked. Does not run classification or
   "transaction_id": "txn_abc123",
   "user_email": "user@example.com",
   "phone": "+91-9876543210",
+  "merchant_id": "merchant-acme",
   "amount": 4999.00,
   "error_code": "insufficient_funds",
   "past_success_rate": 0.82
@@ -157,10 +158,17 @@ Same schema as `POST /webhook/payment-failure`.
   "audit_log_id": "f9e8d7c6-...",
   "llm_proposed_intent": "offer_emi",
   "llm_confidence": 0.91,
-  "final_intent": "escalate_to_human",
-  "final_status": "ESCALATED",
-  "guardrail_overridden": true,
-  "rule_applied": "RULE_HIGH_RISK_ESCALATE"
+  "final_intent": "offer_emi",
+  "final_status": "EMI_OFFERED",
+  "guardrail_overridden": false,
+  "rule_applied": "RULE_DISCOUNT_CLAMP",
+  "action": "MODIFIED",
+  "modified_parameters": {
+    "parameter": "discount",
+    "proposed": 15.0,
+    "applied": 10.0,
+    "max_allowed": 10.0
+  }
 }
 ```
 
@@ -174,6 +182,8 @@ Same schema as `POST /webhook/payment-failure`.
 | `final_status` | string | Status label written to the audit log. |
 | `guardrail_overridden` | boolean | `true` if the guardrail corrected the LLM. |
 | `rule_applied` | string \| null | The guardrail rule that fired, or `null` if the LLM was correct. |
+| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
+| `modified_parameters` | object \| null | Proposed, applied, and maximum allowed values when policy clamps a parameter. |
 
 ---
 
@@ -196,8 +206,9 @@ The guardrail evaluates rules in priority order. The first match wins.
 | `RULE_FRAUD_ESCALATE` | `error_code == "fraud_suspected"` and LLM did not propose escalation | Forces `escalate_to_human` |
 | `RULE_HIGH_RISK_ESCALATE` | `amount > 10,000` and `past_success_rate < 0.2` | Forces `escalate_to_human` |
 | `RULE_TIMEOUT_EMI_CORRECT` | `error_code == "gateway_timeout"` and LLM proposed `offer_emi` | Corrects to `retry_now` |
+| `RULE_DISCOUNT_CLAMP` | EMI discount exceeds the merchant's `max_discount_allowed` | Keeps `offer_emi`, clamps discount, sets `action` to `MODIFIED` |
 
-If no rule fires, the LLM's decision passes through unchanged.
+If no rule fires, the LLM's decision passes through unchanged. A policy modification is not a rejection: the intent remains `offer_emi`, but the bounded parameter must be used.
 
 ---
 
@@ -228,7 +239,7 @@ For load testing or bulk replay, use the included batch runner. It fires transac
 **Generate a test batch**
 
 ```bash
-uv run python generate_batch.py
+uv run python scripts/generate_batch.py
 ```
 
 This creates `batch_payload.json` with a mix of normal, fraud, high-risk, and timeout transactions.
@@ -236,15 +247,15 @@ This creates `batch_payload.json` with a mix of normal, fraud, high-risk, and ti
 **Run the batch**
 
 ```bash
-uv run python batch_runner.py
+uv run python scripts/batch_runner.py
 ```
 
 ```bash
 # Custom target and concurrency
-uv run python batch_runner.py --url http://localhost:8000 --concurrency 10
+uv run python scripts/batch_runner.py --url http://localhost:8000 --concurrency 10
 
 # Write full results to a JSON file
-uv run python batch_runner.py --report-json batch_results.json
+uv run python scripts/batch_runner.py --report-json batch_results.json
 ```
 
 **Sample output**
@@ -296,8 +307,11 @@ All email addresses and phone numbers are pseudonymized using [BlindLog](https:/
 | `amount` | decimal | Transaction amount. |
 | `error_code` | string | Failure reason from the webhook. |
 | `past_success_rate` | float | Historical success rate (nullable). |
+| `merchant_id` | string | Merchant policy key; defaults to `default`. |
 | `raw_payload` | JSON | Full webhook payload with PII masked. |
 | `created_at` | timestamp | Ingestion time (server default). |
+
+**`merchant_policies`** stores `max_discount_allowed` for each merchant. **`audit_logs`** stores `action` and `modified_parameters` whenever the guardrail bounds a financial parameter.
 
 **`audit_logs`**
 
@@ -307,7 +321,11 @@ All email addresses and phone numbers are pseudonymized using [BlindLog](https:/
 | `transaction_id` | UUID | Foreign key to `transactions`. |
 | `llm_proposed_action` | text | Serialized `RecoveryDecision` JSON. |
 | `guardrail_decision` | text | Serialized `GuardrailResult` JSON. |
+| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
+| `modified_parameters` | JSON | Proposed, applied, and maximum allowed values for a clamped parameter. |
 | `final_status` | string | `RETRIED`, `EMI_OFFERED`, or `ESCALATED`. |
+| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
+| `modified_parameters` | object | Policy clamp details, including proposed, applied, and maximum allowed values. |
 | `timestamp` | timestamp | Decision time (server default). |
 
 ---
