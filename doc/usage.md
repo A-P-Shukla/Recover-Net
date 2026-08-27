@@ -218,7 +218,7 @@ This should not happen in normal operation. If it does, check that `BLINDLOG_SEC
 
 ## Batch processing
 
-For bulk replay, load testing, or proving guardrail behavior at scale, use the batch runner.
+For bulk replay, load testing, or proving guardrail behavior at scale, use the batch runner. It uses Rich to show live completion progress and a final decision ledger.
 
 **Step 1: Generate a test batch**
 
@@ -259,6 +259,8 @@ If you have a paid Groq plan, you can increase concurrency:
 ```bash
 uv run python scripts/batch_runner.py --concurrency 20
 ```
+
+The dashboard labels successful non-escalated actions `RECOVERED` in green, escalated actions `BLOCKED` in red, and request failures `FAILED` in yellow. Each successful response shows a shortened `audit_log_id`. The final table also shows the applied rule or action, including `MODIFIED` when an EMI discount was clamped.
 
 **Generating random test data (not for batch)**
 

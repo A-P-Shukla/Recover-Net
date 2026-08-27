@@ -190,6 +190,10 @@ The migration is PostgreSQL-native — it uses `postgresql.UUID` and `postgresql
 
 A single `postgres:16-alpine` container with a named volume for persistence, a health check, and `restart: unless-stopped`. No other infrastructure is required to run the service.
 
+### Interactive batch runner (`scripts/batch_runner.py`)
+
+The batch runner uses `aiohttp` for concurrent requests and Rich for terminal presentation. A live progress bar advances as each request completes. The final dashboard contains a summary panel, colored `RECOVERED`/`BLOCKED`/`FAILED` badges, shortened transaction and audit identifiers, applied rule or action, amount, and a guardrail activity table.
+
 ```
 Container:  recover_net_postgres
 Port:       5432
