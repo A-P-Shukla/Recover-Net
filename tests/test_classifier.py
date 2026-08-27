@@ -7,6 +7,7 @@ Uses native Groq SDK with JSON schema response_format — no tool calling.
 
 import json
 import sys
+from typing import Any, Dict
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -17,7 +18,7 @@ if str(ROOT_DIR) not in sys.path:
 import pytest
 from pydantic import ValidationError
 
-from classifier import (
+from recover_net.llm.classifier import (
     DEFAULT_GROQ_MODEL,
     RECOVERY_ROUTING_TOOL,
     RECOVERY_SCHEMA,
@@ -26,7 +27,7 @@ from classifier import (
 )
 
 
-def _make_mock_completion(arguments_dict: dict):
+def _make_mock_completion(arguments_dict: Dict[str, Any]) -> MagicMock:
     """Build a mock Groq chat completion whose message.content is JSON."""
     mock_message = MagicMock()
     mock_message.content = json.dumps(arguments_dict)
@@ -72,7 +73,7 @@ def test_classify_payment_failure_sanitizes_pii_and_calls_groq():
     2. The correct model and response_format are passed to the Groq API.
     3. The JSON content is parsed into a RecoveryDecision object.
     """
-    raw_payload = {
+    raw_payload: Dict[str, Any] = {
         "transaction_id": "7bf5d920-0619-4d3e-9d00-108faf65028c",
         "user_email": "vihaaniyer911@gmail.com",
         "phone": "+916772495977",
@@ -115,7 +116,7 @@ def test_classify_payment_failure_sanitizes_pii_and_calls_groq():
 
 def test_classify_payment_failure_offer_emi():
     """Test classification route for offer_emi."""
-    payload = {
+    payload: Dict[str, Any] = {
         "transaction_id": "11111111-2222-3333-4444-555555555555",
         "user_email": "customer@example.com",
         "phone": "+919876543210",
@@ -134,9 +135,27 @@ def test_classify_payment_failure_offer_emi():
     assert decision.confidence == 0.87
 
 
+def test_classify_payment_failure_parses_emi_discount():
+    payload: Dict[str, Any] = {
+        "user_email": "customer@example.com",
+        "phone": "+919876543210",
+        "amount": 35000,
+        "error_code": "insufficient_funds",
+    }
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.return_value = _make_mock_completion(
+        {"intent": "offer_emi", "confidence": 0.91, "discount": 15.0}
+    )
+
+    decision = classify_payment_failure(payload, client=mock_client)
+
+    assert decision.discount == 15.0
+    assert decision.to_dict()["discount"] == 15.0
+
+
 def test_classify_payment_failure_escalate_to_human():
     """Test classification route for escalate_to_human."""
-    payload = {
+    payload: Dict[str, Any] = {
         "transaction_id": "99999999-8888-7777-6666-555555555555",
         "user_email": "fraud_test@example.com",
         "phone": "+919876543210",

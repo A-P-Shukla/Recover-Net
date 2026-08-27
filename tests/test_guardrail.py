@@ -12,6 +12,7 @@ Every hard rule is tested with:
 import sys
 from decimal import Decimal
 from pathlib import Path
+from typing import Any, Dict
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
@@ -19,12 +20,12 @@ if str(ROOT_DIR) not in sys.path:
 
 import pytest
 
-from guardrail import (
+from recover_net.guardrails.engine import (
     RULE_FRAUD_ESCALATE,
     RULE_INVALID_CVV_ESCALATE,
     RULE_HIGH_RISK_ESCALATE,
     RULE_TIMEOUT_EMI_CORRECT,
-    GuardrailResult,
+    RULE_DISCOUNT_CLAMP,
     evaluate_action,
 )
 
@@ -33,7 +34,11 @@ from guardrail import (
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _tx(error_code="gateway_timeout", amount=500, past_success_rate=0.8):
+def _tx(
+    error_code: str = "gateway_timeout",
+    amount: Any = 500,
+    past_success_rate: Any = 0.8,
+) -> Dict[str, Any]:
     return {
         "error_code": error_code,
         "amount": amount,
@@ -194,6 +199,36 @@ class TestTimeoutEmiCorrect:
         )
         assert result.rule_applied != RULE_TIMEOUT_EMI_CORRECT
         assert result.final_intent == "offer_emi"
+
+
+class TestFinancialImpactCheck:
+    def test_discount_is_clamped_to_merchant_ceiling(self):
+        result = evaluate_action(
+            _tx(error_code="insufficient_funds", amount=35_000),
+            intent="offer_emi",
+            proposed_discount=15.0,
+            max_discount_allowed=10.0,
+        )
+        assert result.final_intent == "offer_emi"
+        assert result.action == "MODIFIED"
+        assert result.overridden is False
+        assert result.rule_applied == RULE_DISCOUNT_CLAMP
+        assert result.modified_parameters == {
+            "parameter": "discount",
+            "proposed": 15.0,
+            "applied": 10.0,
+            "max_allowed": 10.0,
+        }
+
+    def test_discount_at_ceiling_is_approved(self):
+        result = evaluate_action(
+            _tx(error_code="insufficient_funds"),
+            intent="offer_emi",
+            proposed_discount=10.0,
+            max_discount_allowed=10.0,
+        )
+        assert result.action == "APPROVED"
+        assert result.rule_applied is None
 
 
 # ---------------------------------------------------------------------------
