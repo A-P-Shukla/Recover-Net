@@ -16,6 +16,13 @@ dependencies = [
     "uvicorn>=0.52.4",
 ]
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
@@ -23,7 +30,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
+pythonpath = ["src"]
 filterwarnings = [
     "ignore::pytest.PytestAssertRewriteWarning",
 ]
