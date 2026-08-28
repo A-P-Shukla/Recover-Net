@@ -18,7 +18,17 @@ If any one of these is missing, requests will either fail to connect or return a
 
 ## Starting the stack
 
-**Start PostgreSQL**
+**Start the complete stack**
+
+The included Docker setup builds the API image, starts PostgreSQL, applies all Alembic migrations, and launches Uvicorn:
+
+```bash
+docker compose up --build
+```
+
+The API is available at `http://localhost:8000`. Stop the stack with `Ctrl+C`, or run `docker compose down` from another terminal.
+
+**Start PostgreSQL only**
 
 ```bash
 docker compose up -d

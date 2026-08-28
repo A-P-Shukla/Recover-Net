@@ -68,6 +68,16 @@ uv run uvicorn recover_net.core.app:app --reload
 
 The API is now running at `http://localhost:8000`.
 
+**Docker one-command start**
+
+After configuring `.env`, run the complete API and PostgreSQL stack with:
+
+```bash
+docker compose up --build
+```
+
+Compose waits for PostgreSQL, applies migrations, and starts the API on port `8000`.
+
 ---
 
 ## API reference
