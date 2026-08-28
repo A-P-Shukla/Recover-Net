@@ -1,0 +1,14 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+.kiro
+.env
+.env.*
+!.env.example
+tests
+Audit_Reports
+docs
+batch_payload.json
+batch_results.json
+failed_webhooks.json
