@@ -35,7 +35,13 @@ async def lifespan(app: FastAPI):
             "GROQ_API_KEY is not set. Refusing to start without a valid Groq API key."
         )
 
-    logger.info("Startup checks passed: BLINDLOG_SECRET and GROQ_API_KEY are set.")
+    webhook_secret = os.getenv("WEBHOOK_SECRET", "").strip()
+    if not webhook_secret:
+        raise RuntimeError(
+            "WEBHOOK_SECRET is not set. Refusing to start without a valid webhook signing secret."
+        )
+
+    logger.info("Startup checks passed: BLINDLOG_SECRET, GROQ_API_KEY, and WEBHOOK_SECRET are set.")
     yield
 
 

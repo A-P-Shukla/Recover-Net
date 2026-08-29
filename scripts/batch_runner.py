@@ -18,11 +18,18 @@ Usage:
 
 import argparse
 import asyncio
+import hashlib
+import hmac
 import json
+import os
 import sys
 import time 
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, cast
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import aiohttp
 from rich.console import Console
@@ -119,11 +126,13 @@ async def send_webhook(
     semaphore: asyncio.Semaphore,
     url: str,
     payload: Dict[str, Any],
+    webhook_secret: Optional[str] = None,
 ) -> TxResult:
     """
     POST a single transaction to the recover endpoint.
     The semaphore caps simultaneous in-flight requests.
     Retries up to RETRY_ATTEMPTS times on 429 (rate limit) or 5xx errors.
+    Signs the payload with HMAC-SHA256 if webhook_secret is provided.
     """
     tx_id  = payload.get("transaction_id", "unknown")
     label  = payload.get("_batch_label", "unknown")
@@ -131,11 +140,21 @@ async def send_webhook(
 
     # Strip internal metadata before sending to the API
     api_payload = {k: v for k, v in payload.items() if not k.startswith("_")}
+    raw_bytes = json.dumps(api_payload).encode("utf-8")
+
+    headers = {"Content-Type": "application/json"}
+    if webhook_secret:
+        sig = hmac.new(
+            webhook_secret.encode("utf-8"),
+            raw_bytes,
+            hashlib.sha256,
+        ).hexdigest()
+        headers["X-Webhook-Signature"] = f"sha256={sig}"
 
     async with semaphore:
         for attempt in range(1, RETRY_ATTEMPTS + 1):
             try:
-                async with session.post(url, json=api_payload) as resp:
+                async with session.post(url, data=raw_bytes, headers=headers) as resp:
                     http_status = resp.status
                     try:
                         body: Dict[str, Any] = await resp.json(content_type=None)
@@ -204,6 +223,7 @@ async def run_batch(
     transactions: List[Dict[str, Any]],
     base_url: str,
     concurrency: int,
+    webhook_secret: Optional[str] = None,
 ) -> BatchReport:
     """Blast all transactions concurrently and return the aggregated report."""
     url       = base_url.rstrip("/") + ENDPOINT
@@ -231,7 +251,7 @@ async def run_batch(
         )
 
         async def send_with_progress(transaction: Dict[str, Any]) -> TxResult:
-            result = await send_webhook(session, semaphore, url, transaction)
+            result = await send_webhook(session, semaphore, url, transaction, webhook_secret=webhook_secret)
             progress.advance(progress_task)
             return result
 
@@ -390,6 +410,8 @@ def parse_args() -> argparse.Namespace:
                    help=f"Path to batch JSON file (default: {BATCH_FILE})")
     p.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY,
                    help=f"Max simultaneous requests (default: {DEFAULT_CONCURRENCY})")
+    p.add_argument("--secret",      default=os.getenv("WEBHOOK_SECRET", ""),
+                   help="HMAC-SHA256 secret key for request signing (default: $WEBHOOK_SECRET)")
     p.add_argument("--report-json", metavar="FILE",
                    help="Also write full results to a JSON file")
     return p.parse_args()
@@ -417,7 +439,7 @@ def main() -> None:
             sys.exit(1)
         transactions.append(cast(Dict[str, Any], raw_transaction))
 
-    report = asyncio.run(run_batch(transactions, args.url, args.concurrency))
+    report = asyncio.run(run_batch(transactions, args.url, args.concurrency, webhook_secret=args.secret))
     print_report(report)
 
     if args.report_json:
