@@ -1,402 +1,452 @@
 [
   {
-    "transaction_id": "7bf5d920-0619-4d3e-9d00-108faf65028c",
-    "user_email": "vihaaniyer911@gmail.com",
-    "phone": "+916772495977",
-    "amount": 45735,
+    "transaction_id": "961ac610-67e0-47ce-b8ca-b71de6aca365",
+    "user_email": "kabirmalhotra@outlook.com",
+    "phone": "+917039346662",
+    "merchant_id": "default",
+    "amount": 20115,
     "error_code": "invalid_cvv",
-    "past_success_rate": 0.53
+    "past_success_rate": 0.15
   },
   {
-    "transaction_id": "6524a737-9038-400a-a807-897e94cccb99",
-    "user_email": "priya.sharma24@gmail.com",
-    "phone": "+919174565225",
-    "amount": 6347,
+    "transaction_id": "94871e80-58d5-4a2b-ac03-dbac8a32a045",
+    "user_email": "arjun.nair@yahoo.com",
+    "phone": "+919223310752",
+    "merchant_id": "default",
+    "amount": 21967,
     "error_code": "invalid_cvv",
-    "past_success_rate": 0.32
+    "past_success_rate": 0.04
   },
   {
-    "transaction_id": "feda0c94-144d-4b7a-978b-604efe3b88a9",
-    "user_email": "aditya.sharma770@protonmail.com",
-    "phone": "+916798479837",
-    "amount": 29037,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.47
-  },
-  {
-    "transaction_id": "b557de40-bb5d-47e7-b248-dd5f8c22daf4",
-    "user_email": "aarav.nair@protonmail.com",
-    "phone": "+918890197018",
-    "amount": 995,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.98
-  },
-  {
-    "transaction_id": "dbc2c97e-d206-40e5-8810-9fdcaefbda7d",
-    "user_email": "sai_malhotra671@yahoo.com",
-    "phone": "+916436054858",
-    "amount": 47466,
+    "transaction_id": "01eff814-5928-4c84-9ed3-371af9b08893",
+    "user_email": "isha.chopra290@outlook.com",
+    "phone": "+917777715315",
+    "merchant_id": "default",
+    "amount": 27836,
     "error_code": "invalid_cvv",
-    "past_success_rate": 0.47
+    "past_success_rate": 0.68
   },
   {
-    "transaction_id": "e2f1ca92-e1cc-4713-b764-4d64a2334203",
-    "user_email": "vihaanverma501@outlook.com",
-    "phone": "+917877023219",
-    "amount": 24083,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.34
-  },
-  {
-    "transaction_id": "83503253-ed21-4650-8ff6-c4872feeab02",
-    "user_email": "vihaan.joshi4@gmail.com",
-    "phone": "+919097639750",
-    "amount": 22860,
+    "transaction_id": "85f372ce-610c-4623-9477-bb497d28cfc2",
+    "user_email": "saanvireddy688@gmail.com",
+    "phone": "+917754120191",
+    "merchant_id": "default",
+    "amount": 3802,
     "error_code": "gateway_timeout",
-    "past_success_rate": 0.11
+    "past_success_rate": 0.9
   },
   {
-    "transaction_id": "5ebe4d14-9ac3-4cf5-9a5d-17ab4ccdbefa",
-    "user_email": "priya_kapoor@gmail.com",
-    "phone": "+918370470014",
-    "amount": 9648,
+    "transaction_id": "d20d0ef3-812c-47f9-ad21-683c26bf369d",
+    "user_email": "zarakumar459@outlook.com",
+    "phone": "+919576428299",
+    "merchant_id": "default",
+    "amount": 11654,
     "error_code": "invalid_cvv",
-    "past_success_rate": 0.58
-  },
-  {
-    "transaction_id": "2de1447a-da7b-4f13-84d8-9fd4b76157aa",
-    "user_email": "reyansh.sharma@protonmail.com",
-    "phone": "+916262692319",
-    "amount": 35205,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.44
-  },
-  {
-    "transaction_id": "1be33024-6cf1-4bb4-b62b-e5db057f1e1a",
-    "user_email": "isha.kumar266@outlook.com",
-    "phone": "+916449840609",
-    "amount": 34389,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.84
-  },
-  {
-    "transaction_id": "9ef62d5e-9c8c-43ef-9cda-e800a373e4b2",
-    "user_email": "anshpatel558@yahoo.com",
-    "phone": "+919771552219",
-    "amount": 10276,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.64
-  },
-  {
-    "transaction_id": "dbbc2f0b-e136-493c-9095-3d5458d81617",
-    "user_email": "ishaan.nair863@outlook.com",
-    "phone": "+919091537455",
-    "amount": 20033,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.36
-  },
-  {
-    "transaction_id": "a0fa8f96-1096-4276-af8a-1288c7c54da5",
-    "user_email": "ansh.iyer@yahoo.com",
-    "phone": "+918592889915",
-    "amount": 4794,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.91
-  },
-  {
-    "transaction_id": "e2d16cb0-f540-4fc2-a415-eb8584f0e251",
-    "user_email": "kabirchopra@gmail.com",
-    "phone": "+919686160464",
-    "amount": 48908,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.73
-  },
-  {
-    "transaction_id": "e049bfd0-b704-4fa2-8fa4-ae2b54f7358f",
-    "user_email": "aarav.sharma@outlook.com",
-    "phone": "+916472062875",
-    "amount": 11771,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.81
-  },
-  {
-    "transaction_id": "b6a73286-bc22-4146-9ab3-0317ef21ceaf",
-    "user_email": "ishaan_verma@protonmail.com",
-    "phone": "+917758766563",
-    "amount": 10266,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.19
-  },
-  {
-    "transaction_id": "f32b65ae-3ff5-436b-bfbe-30d418bf9575",
-    "user_email": "isha.chopra53@gmail.com",
-    "phone": "+917270279801",
-    "amount": 10462,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.86
-  },
-  {
-    "transaction_id": "9f708ff8-6825-483a-8bd1-90a40fdde0a6",
-    "user_email": "arjunkapoor@gmail.com",
-    "phone": "+917167748465",
-    "amount": 8068,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.58
-  },
-  {
-    "transaction_id": "62cd0742-f829-47f9-90ae-2eab38450bcc",
-    "user_email": "aditya_chopra167@gmail.com",
-    "phone": "+917612129952",
-    "amount": 22391,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.26
-  },
-  {
-    "transaction_id": "5e320448-8ba4-4859-a9fd-5dd06bff6aeb",
-    "user_email": "diya.chopra386@protonmail.com",
-    "phone": "+917453835725",
-    "amount": 47848,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.5
-  },
-  {
-    "transaction_id": "d4ba903d-3cce-4fc0-9f5d-cfeff3d8dc69",
-    "user_email": "myramehta@protonmail.com",
-    "phone": "+917936829581",
-    "amount": 36384,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.03
-  },
-  {
-    "transaction_id": "dc90e282-4a9f-4d12-8268-b9c6dae4d721",
-    "user_email": "isha.joshi408@protonmail.com",
-    "phone": "+919099114660",
-    "amount": 12505,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.92
-  },
-  {
-    "transaction_id": "78cbb8dc-6a72-4c48-9769-abc627620f6c",
-    "user_email": "saanvipatel@gmail.com",
-    "phone": "+916295569842",
-    "amount": 24649,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.67
-  },
-  {
-    "transaction_id": "f9694aeb-f569-4150-baf8-c24e2f385dbc",
-    "user_email": "zarasingh@gmail.com",
-    "phone": "+916710444481",
-    "amount": 18006,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.66
-  },
-  {
-    "transaction_id": "80bf3220-3f21-46c7-8574-c64296d8265f",
-    "user_email": "vivaan_sharma@yahoo.com",
-    "phone": "+916267739360",
-    "amount": 18881,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.5
-  },
-  {
-    "transaction_id": "ec8f7d10-d069-4641-a0b1-2f14b4271fc4",
-    "user_email": "kabir.reddy795@gmail.com",
-    "phone": "+919061494256",
-    "amount": 1965,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.84
-  },
-  {
-    "transaction_id": "86af5b6b-ddf7-4dc2-9534-2f07de83dab7",
-    "user_email": "priya.malhotra@protonmail.com",
-    "phone": "+916232086429",
-    "amount": 37747,
-    "error_code": "gateway_timeout",
     "past_success_rate": 0.93
   },
   {
-    "transaction_id": "1726fed2-635a-4f84-9bbf-11028296e6a0",
-    "user_email": "tara.mehta@yahoo.com",
-    "phone": "+917732033939",
-    "amount": 34657,
+    "transaction_id": "d3982a6a-18c0-497f-b62a-2f6f08a740fc",
+    "user_email": "saanvisharma335@gmail.com",
+    "phone": "+918105054260",
+    "merchant_id": "default",
+    "amount": 22057,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.97
+  },
+  {
+    "transaction_id": "fe8b48c8-7dc0-43d0-a1a8-95cb10a877bc",
+    "user_email": "aditya_verma@protonmail.com",
+    "phone": "+919721013580",
+    "merchant_id": "default",
+    "amount": 2099,
     "error_code": "insufficient_funds",
+    "past_success_rate": 0.44
+  },
+  {
+    "transaction_id": "85bb21d1-9727-431f-b9ed-bd0fbb1e175c",
+    "user_email": "zara_chopra527@yahoo.com",
+    "phone": "+916367557909",
+    "merchant_id": "default",
+    "amount": 6991,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.93
+  },
+  {
+    "transaction_id": "3c155f2a-0ed7-4bbb-972d-fc9454ebc67e",
+    "user_email": "kabir.patel@gmail.com",
+    "phone": "+919026428859",
+    "merchant_id": "default",
+    "amount": 27681,
+    "error_code": "fraud_suspected",
     "past_success_rate": 0.7
   },
   {
-    "transaction_id": "63425d05-0178-46cb-a24a-8639277e555a",
-    "user_email": "arjun.verma@yahoo.com",
-    "phone": "+918238730371",
-    "amount": 16998,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.5
-  },
-  {
-    "transaction_id": "f9df8baa-07bc-4dee-9e23-37cbb05bd651",
-    "user_email": "isha.verma443@gmail.com",
-    "phone": "+917945558063",
-    "amount": 8151,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.35
-  },
-  {
-    "transaction_id": "59763a50-2b74-4591-a579-01fa79357d21",
-    "user_email": "kabir_sharma422@outlook.com",
-    "phone": "+917423828280",
-    "amount": 24324,
+    "transaction_id": "b5d4ddcd-ea13-4def-bdfa-7b5c1c87eae1",
+    "user_email": "riya_joshi323@outlook.com",
+    "phone": "+917951216300",
+    "merchant_id": "default",
+    "amount": 30662,
     "error_code": "gateway_timeout",
     "past_success_rate": 0.79
   },
   {
-    "transaction_id": "1e853c2b-255e-4139-aa33-7645c3228a4d",
-    "user_email": "isha.iyer183@outlook.com",
-    "phone": "+917944647340",
-    "amount": 13059,
+    "transaction_id": "82910f61-ac4a-45d9-8095-4f477b94ec3b",
+    "user_email": "saijoshi@outlook.com",
+    "phone": "+918581570027",
+    "merchant_id": "default",
+    "amount": 23647,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.89
+  },
+  {
+    "transaction_id": "6fbf8839-90a7-4860-a98b-e4f840747806",
+    "user_email": "ishakumar@protonmail.com",
+    "phone": "+917447133230",
+    "merchant_id": "default",
+    "amount": 36864,
     "error_code": "insufficient_funds",
-    "past_success_rate": 0.03
+    "past_success_rate": 0.26
   },
   {
-    "transaction_id": "f6ebed0b-26e1-406a-9aea-0d89eca7019e",
-    "user_email": "arjunmehta@protonmail.com",
-    "phone": "+917894825003",
-    "amount": 32116,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.36
+    "transaction_id": "8fea8f5c-51cc-408b-b898-038a4a4ae9dc",
+    "user_email": "aditya.joshi765@yahoo.com",
+    "phone": "+917144691763",
+    "merchant_id": "default",
+    "amount": 1880,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.5
   },
   {
-    "transaction_id": "54cf095c-6887-4c59-a8f9-fbb10fe5123d",
-    "user_email": "ansh_gupta720@yahoo.com",
-    "phone": "+916368875521",
-    "amount": 23337,
+    "transaction_id": "abb1ee74-80ec-492f-9756-d627a8db4958",
+    "user_email": "arjun_sharma692@gmail.com",
+    "phone": "+919636031358",
+    "merchant_id": "default",
+    "amount": 44516,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.48
+  },
+  {
+    "transaction_id": "7d78c5ed-2e10-4dd8-bafc-2682c0e5bc3c",
+    "user_email": "arjun.chopra@gmail.com",
+    "phone": "+917161358938",
+    "merchant_id": "default",
+    "amount": 3456,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.81
+  },
+  {
+    "transaction_id": "c718534c-81e3-4203-aafe-2c64111ea996",
+    "user_email": "tara.kapoor@protonmail.com",
+    "phone": "+917741802242",
+    "merchant_id": "default",
+    "amount": 36680,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.88
+  },
+  {
+    "transaction_id": "db431b76-473f-4533-b896-38233eeba837",
+    "user_email": "ananyaverma655@protonmail.com",
+    "phone": "+916584953739",
+    "merchant_id": "default",
+    "amount": 15439,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.33
+  },
+  {
+    "transaction_id": "55024f9e-a0ea-442e-a9be-95f6cdba5dd6",
+    "user_email": "zaraverma@gmail.com",
+    "phone": "+919640360738",
+    "merchant_id": "default",
+    "amount": 25734,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.58
+  },
+  {
+    "transaction_id": "ffe56d24-80a7-4d12-a10e-9f5905459b92",
+    "user_email": "arjun_mehta@protonmail.com",
+    "phone": "+918466654877",
+    "merchant_id": "default",
+    "amount": 6735,
     "error_code": "gateway_timeout",
     "past_success_rate": 0.97
   },
   {
-    "transaction_id": "48d312ac-d32e-4489-97a6-6a020961dfe7",
-    "user_email": "kavyaverma28@gmail.com",
-    "phone": "+917502906862",
-    "amount": 27678,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.01
-  },
-  {
-    "transaction_id": "2834dfd3-9d21-48e2-b71c-883fec3a60ee",
-    "user_email": "myra_gupta296@protonmail.com",
-    "phone": "+919740987338",
-    "amount": 35030,
+    "transaction_id": "2a12acdb-c4a6-48e3-a812-4637ec894106",
+    "user_email": "isha_sharma@outlook.com",
+    "phone": "+916390657406",
+    "merchant_id": "default",
+    "amount": 27402,
     "error_code": "fraud_suspected",
-    "past_success_rate": 0.95
+    "past_success_rate": 0.34
   },
   {
-    "transaction_id": "90b5d5a3-397e-4d99-b722-132c2bce10b5",
-    "user_email": "kabirmalhotra856@yahoo.com",
-    "phone": "+918199216679",
-    "amount": 35897,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.88
-  },
-  {
-    "transaction_id": "cd41df82-c668-433f-b791-26de37bb34f6",
-    "user_email": "kabir_singh193@outlook.com",
-    "phone": "+916221235413",
-    "amount": 10860,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.63
-  },
-  {
-    "transaction_id": "8a776997-c9f6-4858-bf35-3423bbafd0bf",
-    "user_email": "priya.nair@outlook.com",
-    "phone": "+917497141698",
-    "amount": 25160,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.59
-  },
-  {
-    "transaction_id": "6f5b4324-53fb-4d6c-85c3-acf96181cd43",
-    "user_email": "vivaanjoshi@yahoo.com",
-    "phone": "+917887306053",
-    "amount": 33291,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.73
-  },
-  {
-    "transaction_id": "73e9cdbd-066e-45ff-8ae1-f91d033536fd",
-    "user_email": "zara_iyer38@yahoo.com",
-    "phone": "+916481630825",
-    "amount": 7450,
+    "transaction_id": "81c465b1-e738-4af4-b768-0e1dc33a218a",
+    "user_email": "ananya_nair624@protonmail.com",
+    "phone": "+918903435900",
+    "merchant_id": "default",
+    "amount": 15223,
     "error_code": "gateway_timeout",
-    "past_success_rate": 0.39
+    "past_success_rate": 0.84
   },
   {
-    "transaction_id": "e0d2f385-de51-4d7c-8299-1adfa4e906ca",
-    "user_email": "ananya.verma79@protonmail.com",
-    "phone": "+916385988592",
-    "amount": 49198,
-    "error_code": "invalid_cvv",
+    "transaction_id": "80e84579-b348-457d-beaa-ff995d45f365",
+    "user_email": "myra_joshi@outlook.com",
+    "phone": "+917751934912",
+    "merchant_id": "default",
+    "amount": 42520,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.08
+  },
+  {
+    "transaction_id": "d8cd95d4-10d6-4559-baf9-d73f528c0574",
+    "user_email": "aarav_sharma@yahoo.com",
+    "phone": "+917010256034",
+    "merchant_id": "default",
+    "amount": 30074,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.28
+  },
+  {
+    "transaction_id": "7e752283-f27e-4127-928d-10cf1472fda9",
+    "user_email": "kabirreddy845@yahoo.com",
+    "phone": "+919322967837",
+    "merchant_id": "default",
+    "amount": 25606,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.46
+  },
+  {
+    "transaction_id": "edb0ae2a-0a33-4921-b9c4-48b4a5ce7254",
+    "user_email": "vihaannair235@gmail.com",
+    "phone": "+919914446457",
+    "merchant_id": "default",
+    "amount": 40530,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.08
+  },
+  {
+    "transaction_id": "916a941f-e0ff-44d0-bb18-d4321c03ab9f",
+    "user_email": "reyanshgupta@gmail.com",
+    "phone": "+919365951971",
+    "merchant_id": "default",
+    "amount": 45451,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.84
+  },
+  {
+    "transaction_id": "fe728081-7d6a-48cf-ab27-a2be711ef509",
+    "user_email": "ansh.gupta@protonmail.com",
+    "phone": "+916702198325",
+    "merchant_id": "default",
+    "amount": 24124,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.11
+  },
+  {
+    "transaction_id": "cb81f0f6-0f15-41d4-9523-36316faf043d",
+    "user_email": "reyansh.singh85@outlook.com",
+    "phone": "+919073376555",
+    "merchant_id": "default",
+    "amount": 40107,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.13
+  },
+  {
+    "transaction_id": "c8498894-5138-4eba-a393-c69b35219954",
+    "user_email": "vihaanmehta@yahoo.com",
+    "phone": "+919935781765",
+    "merchant_id": "default",
+    "amount": 16957,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.56
+  },
+  {
+    "transaction_id": "ea0ac75d-8634-4a68-9478-fcc0a15775f8",
+    "user_email": "kavya_gupta@protonmail.com",
+    "phone": "+916907215973",
+    "merchant_id": "default",
+    "amount": 9496,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.25
+  },
+  {
+    "transaction_id": "ce7e9050-bd5e-4afc-a313-39614d83b8fb",
+    "user_email": "isha_joshi806@protonmail.com",
+    "phone": "+919742115280",
+    "merchant_id": "default",
+    "amount": 24302,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.31
+  },
+  {
+    "transaction_id": "b8e91424-6968-4ebd-99fa-ad1fb4dd67a5",
+    "user_email": "saanvinair@protonmail.com",
+    "phone": "+916508493882",
+    "merchant_id": "default",
+    "amount": 39818,
+    "error_code": "fraud_suspected",
     "past_success_rate": 0.74
   },
   {
-    "transaction_id": "5b834ed5-5b8f-449f-943b-0ad73480242a",
-    "user_email": "anshjoshi@protonmail.com",
-    "phone": "+916548995279",
-    "amount": 26376,
+    "transaction_id": "f1a0f13e-567b-4565-aca2-fef6de1e6ac4",
+    "user_email": "tarasharma@yahoo.com",
+    "phone": "+916977047651",
+    "merchant_id": "default",
+    "amount": 23407,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.63
+  },
+  {
+    "transaction_id": "8df8c8e9-fdf5-4278-a024-27b9904a7229",
+    "user_email": "aaravkumar810@protonmail.com",
+    "phone": "+919688174031",
+    "merchant_id": "default",
+    "amount": 15229,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.61
+  },
+  {
+    "transaction_id": "9767268e-3690-47a7-a755-32cac87e225d",
+    "user_email": "kavyakapoor391@outlook.com",
+    "phone": "+917368687321",
+    "merchant_id": "default",
+    "amount": 43178,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.14
+  },
+  {
+    "transaction_id": "41774b6a-0351-4063-baa2-e8b3939fc547",
+    "user_email": "isha_gupta981@gmail.com",
+    "phone": "+917310407329",
+    "merchant_id": "default",
+    "amount": 27908,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.06
+  },
+  {
+    "transaction_id": "103c6d3a-c9c4-47f6-9775-9d068ee2018d",
+    "user_email": "diyachopra@outlook.com",
+    "phone": "+917187174890",
+    "merchant_id": "default",
+    "amount": 31619,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.22
+  },
+  {
+    "transaction_id": "952b4439-a3e8-4f44-ac45-d77ebe0b45a0",
+    "user_email": "zara.chopra@gmail.com",
+    "phone": "+919116205566",
+    "merchant_id": "default",
+    "amount": 38507,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.95
+  },
+  {
+    "transaction_id": "d0f1a7ff-a7db-4fe2-b0bd-3cf95c0fbb30",
+    "user_email": "aditya.chopra@outlook.com",
+    "phone": "+916925526565",
+    "merchant_id": "default",
+    "amount": 15171,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.44
+  },
+  {
+    "transaction_id": "fbe0cfd4-9302-4944-abb6-2ca0a8afa496",
+    "user_email": "saisingh@protonmail.com",
+    "phone": "+919024625874",
+    "merchant_id": "default",
+    "amount": 48976,
     "error_code": "invalid_cvv",
     "past_success_rate": 0.98
   },
   {
-    "transaction_id": "e2ff4c81-13cc-4a17-a3d9-67f7cc729d31",
-    "user_email": "ananya_verma@yahoo.com",
-    "phone": "+916635556087",
-    "amount": 11961,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.15
+    "transaction_id": "44d5a612-f583-4ecf-9b78-efdefff47620",
+    "user_email": "isha.kumar@outlook.com",
+    "phone": "+918887140596",
+    "merchant_id": "default",
+    "amount": 34638,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.71
   },
   {
-    "transaction_id": "622f19da-a8e8-4b9f-a179-1b81e58aeed8",
-    "user_email": "kavya_iyer@protonmail.com",
-    "phone": "+919399168119",
-    "amount": 36799,
+    "transaction_id": "1d890ce8-0a36-4cc1-9b61-dc68cdc1c30f",
+    "user_email": "sai_patel@protonmail.com",
+    "phone": "+918169321706",
+    "merchant_id": "default",
+    "amount": 10379,
     "error_code": "fraud_suspected",
+    "past_success_rate": 0.13
+  },
+  {
+    "transaction_id": "eb71a900-b2cd-408b-ad2e-06cedbbae372",
+    "user_email": "diya_iyer@outlook.com",
+    "phone": "+917019551694",
+    "merchant_id": "default",
+    "amount": 12148,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.86
+  },
+  {
+    "transaction_id": "b88d2258-56f4-4dbb-8950-72001c79ea31",
+    "user_email": "ananyapatel79@outlook.com",
+    "phone": "+919571116829",
+    "merchant_id": "default",
+    "amount": 42365,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.73
+  },
+  {
+    "transaction_id": "b0973f22-b399-4fc0-b29e-3ddcac03b4fb",
+    "user_email": "ananyasingh422@outlook.com",
+    "phone": "+919497989521",
+    "merchant_id": "default",
+    "amount": 4645,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.61
+  },
+  {
+    "transaction_id": "3c7b3e34-d907-4a13-b70a-d615b3fd78cb",
+    "user_email": "ansh.singh@gmail.com",
+    "phone": "+919057804876",
+    "merchant_id": "default",
+    "amount": 28133,
+    "error_code": "invalid_cvv",
+    "past_success_rate": 0.46
+  },
+  {
+    "transaction_id": "08519729-c99e-4a53-ac7a-985256f88dde",
+    "user_email": "priya.mehta@yahoo.com",
+    "phone": "+919437259694",
+    "merchant_id": "default",
+    "amount": 27982,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.61
+  },
+  {
+    "transaction_id": "60a3f2ba-a972-4166-b911-4946e9e25585",
+    "user_email": "adityapatel374@outlook.com",
+    "phone": "+917829425764",
+    "merchant_id": "default",
+    "amount": 30782,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.18
+  },
+  {
+    "transaction_id": "1399d5b3-dfcc-4d4e-bd87-c80e17f298c1",
+    "user_email": "diya.verma@yahoo.com",
+    "phone": "+918157446325",
+    "merchant_id": "default",
+    "amount": 6572,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.62
+  },
+  {
+    "transaction_id": "8030787a-c525-49b9-97ac-47417d6ff882",
+    "user_email": "riya.kapoor@gmail.com",
+    "phone": "+917995277336",
+    "merchant_id": "default",
+    "amount": 49877,
+    "error_code": "insufficient_funds",
     "past_success_rate": 0.64
-  },
-  {
-    "transaction_id": "931f3783-00a5-47ed-a614-0d16bfa95afd",
-    "user_email": "priya.gupta483@gmail.com",
-    "phone": "+917994508101",
-    "amount": 45493,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.77
-  },
-  {
-    "transaction_id": "94357f58-84cb-47e0-9cd9-34be2a8e69fd",
-    "user_email": "vihaan.malhotra@yahoo.com",
-    "phone": "+918516980864",
-    "amount": 7259,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.27
-  },
-  {
-    "transaction_id": "f3c88394-a893-4404-ba50-0e9237417d0b",
-    "user_email": "ansh_iyer92@protonmail.com",
-    "phone": "+919244271600",
-    "amount": 6810,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.74
-  },
-  {
-    "transaction_id": "bf4454e9-f5a4-40b0-8f96-18fd9f85e4aa",
-    "user_email": "kavyapatel185@yahoo.com",
-    "phone": "+918413829329",
-    "amount": 45071,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.21
-  },
-  {
-    "transaction_id": "d3898ead-b0b0-468e-8263-9488ae228121",
-    "user_email": "isha.patel@yahoo.com",
-    "phone": "+917549710708",
-    "amount": 8627,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.6
   }
 ]
