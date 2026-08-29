@@ -88,6 +88,7 @@ def _base(first: str, last: str) -> Dict[str, Any]:
         "transaction_id": str(uuid.uuid4()),
         "user_email": _email(first, last),
         "phone": _phone(),
+        "merchant_id": "default",
     }
 
 
@@ -184,9 +185,9 @@ def main() -> None:
     print(f"  high_risk    : {n_hr:3d}  ({n_hr/len(batch)*100:.0f}%)")
     print(f"  fraud        : {n_fr:3d}  ({n_fr/len(batch)*100:.0f}%)")
     print(f"\nExpected guardrail intercepts:")
-    print(f"  RULE_FRAUD_ESCALATE     → {n_fr} records  (100% of fraud bucket)")
-    print(f"  RULE_HIGH_RISK_ESCALATE → {n_hr} records  (100% of high-risk bucket)")
-    print(f"  Total escalations       → {n_fr + n_hr} / {len(batch)}  ({(n_fr+n_hr)/len(batch)*100:.0f}%)")
+    print(f"  RULE_FRAUD_ESCALATE     -> {n_fr} records  (100% of fraud bucket)")
+    print(f"  RULE_HIGH_RISK_ESCALATE -> {n_hr} records  (100% of high-risk bucket)")
+    print(f"  Total escalations       -> {n_fr + n_hr} / {len(batch)}  ({(n_fr+n_hr)/len(batch)*100:.0f}%)")
     print(f"\nSample records:")
     for label in ("standard", "high_risk", "fraud"):
         sample = next(r for r in batch if r["_batch_label"] == label)

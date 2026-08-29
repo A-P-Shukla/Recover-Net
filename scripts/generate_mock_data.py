@@ -76,6 +76,7 @@ def generate_record() -> Dict[str, Any]:
         "transaction_id": str(uuid.uuid4()),
         "user_email": random_email(first, last),
         "phone": random_phone(),
+        "merchant_id": "default",
         "amount": random.randint(500, 50000),
         "error_code": random.choice(ERROR_CODES),
         "past_success_rate": round(random.uniform(0.0, 1.0), 2),
