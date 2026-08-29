@@ -170,11 +170,12 @@ def run_recovery_pipeline(
     }
     merchant_id = tx.merchant_id
     merchant_policy = db.get(MerchantPolicy, merchant_id)
-    max_discount_allowed = float(
-        merchant_policy.max_discount_allowed
-        if merchant_policy is not None
-        else 10.0
-    )
+    if merchant_policy is None:
+        raise ValueError(
+            f"Unknown or unconfigured merchant_id '{merchant_id}'. "
+            "Merchant must be registered in merchant_policies before processing."
+        )
+    max_discount_allowed = float(merchant_policy.max_discount_allowed)
     guardrail_result: GuardrailResult = evaluate_action(
         guardrail_input,
         groq_decision.intent,

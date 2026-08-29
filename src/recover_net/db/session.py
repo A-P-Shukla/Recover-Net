@@ -59,7 +59,18 @@ def init_db(engine_instance: Optional[Engine] = None) -> None:
 
     require_blindlog_secret()
 
-    importlib.import_module("recover_net.db.models")
-
     target_engine = engine_instance or engine
     Base.metadata.create_all(bind=target_engine)
+
+    from decimal import Decimal
+    from recover_net.db.models import MerchantPolicy
+
+    with Session(target_engine) as session:
+        if not session.get(MerchantPolicy, "default"):
+            session.add(
+                MerchantPolicy(
+                    merchant_id="default",
+                    max_discount_allowed=Decimal("10.00"),
+                )
+            )
+            session.commit()

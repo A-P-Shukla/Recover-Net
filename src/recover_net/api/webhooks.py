@@ -40,11 +40,11 @@ def _verify_webhook_signature(raw_body: bytes, signature_header: str | None) -> 
     webhook_secret = os.getenv("WEBHOOK_SECRET", "").strip()
 
     if not webhook_secret:
-        logger.warning(
-            "WEBHOOK_SECRET is not set — skipping signature verification. "
-            "Set WEBHOOK_SECRET before exposing this service beyond localhost."
+        logger.error("WEBHOOK_SECRET is not set — rejecting request (fail-closed).")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Server configuration error: WEBHOOK_SECRET is missing.",
         )
-        return
 
     if not signature_header:
         raise HTTPException(
