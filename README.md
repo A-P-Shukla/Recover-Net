@@ -1,37 +1,38 @@
 # Recover-Net
 
-Recover-Net is a payment failure recovery API that combines a Groq-powered LLM classifier with a deterministic guardrail engine to triage failed transactions and route them to the right recovery action — automatically.
+Recover-Net is a high-performance payment failure recovery API that combines a Groq-powered LLM classifier with a deterministic dynamic guardrail engine to triage failed transactions, enforce financial policy boundaries, and route them to optimal recovery actions — with zero PII exposure and complete audit provenance.
 
-Every decision is immutably logged. No PII ever leaves the system unmasked.
+---
 
-**Docs**
-- [System Architecture](doc/architecture.md) — pipeline stages, data flow, security boundaries, module graph
-- [Usage Guide](doc/usage.md) — running the stack, payload reference, batch processing, integration patterns
-- [Database Reference](doc/database.md) — schema, columns, indexes, migrations, example queries
+## Documentation Navigation
+- [System Architecture](doc/architecture.md) — Pipeline stages, security boundaries, and module dependency graph
+- [Usage Guide](doc/usage.md) — Running the stack, payload reference, HMAC signatures, and batch testing
+- [Database Reference](doc/database.md) — PostgreSQL schema, column dictionaries, indexes, and migrations
+- [Conversation & Audit Log](docs/CONVERSATION_LOG.md) — Chronological log of decisions, features, and fixes
 
 ---
 
 ## How it works
 
-A payment failure event arrives as a webhook. Recover-Net runs it through a four-stage pipeline:
+A payment failure event arrives as an HMAC-signed webhook. Recover-Net executes a four-stage pipeline:
 
 ```
-Inbound webhook
-    → BlindLog PII masking          (email + phone pseudonymized before any processing)
-    → Groq LLM classifier           (intent: retry_now | offer_emi | escalate_to_human)
-    → Dynamic policy guardrail       (hard rules override or modify bounded financial actions)
-    → Immutable audit log write     (full decision provenance committed atomically)
+Inbound Webhook (signed with HMAC-SHA256)
+    → BlindLog PII Masking          (email + phone pseudonymized before any processing)
+    → Groq LLM Classifier           (intent: retry_now | offer_emi | escalate_to_human)
+    → Dynamic Policy Guardrail       (hard rules override; merchant limits clamp parameters)
+    → Immutable Audit Log Write     (full decision provenance committed atomically)
 ```
 
-The guardrail is pure Python — no probability, no hallucination risk. It runs after the LLM on every request and has the final say.
+The guardrail is pure Python — no probability, no hallucination risk. It evaluates business safety rules and merchant-configured discount ceilings on every request, holding absolute authority over the final recovery action.
 
 ---
 
 ## Quickstart
 
-**Requirements:** Python 3.12+, PostgreSQL, a [Groq API key](https://console.groq.com), and [uv](https://docs.astral.sh/uv/).
+**Requirements:** Python 3.12+, PostgreSQL 16, a [Groq API key](https://console.groq.com), and [uv](https://docs.astral.sh/uv/).
 
-**1. Clone and install**
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/your-org/recover-net.git
@@ -39,59 +40,55 @@ cd recover-net
 uv sync
 ```
 
-**2. Configure environment**
+### 2. Configure environment
 
-Copy `.env.example` to `.env` and fill in your values:
+Copy `.env.example` to `.env` and configure your credentials:
 
 ```bash
 cp .env.example .env
 ```
 
-| Variable | Description |
-|---|---|
-| `DATABASE_URL` | PostgreSQL connection string |
-| `BLINDLOG_SECRET` | Secret key for deterministic PII pseudonymization |
-| `GROQ_API_KEY` | Your Groq API key |
-| `GROQ_MODEL_ID` | Model ID (default: `openai/gpt-oss-20b`) |
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `DATABASE_URL` | Yes | `postgresql+psycopg2://postgres:postgres@localhost:5432/recover_net` | PostgreSQL connection string |
+| `BLINDLOG_SECRET` | Yes | — | Secret key for deterministic PII pseudonymization |
+| `GROQ_API_KEY` | Yes | — | Groq API key for LPU structured inference |
+| `GROQ_MODEL_ID` | No | `openai/gpt-oss-20b` | Model identifier |
+| `WEBHOOK_SECRET` | Yes | — | Secret key for HMAC-SHA256 request signature verification |
 
-**3. Run database migrations**
+### 3. Run database migrations
 
 ```bash
 uv run alembic upgrade head
 ```
 
-**4. Start the server**
+### 4. Start the server
 
 ```bash
-uv run uvicorn recover_net.core.app:app --reload
+uv run uvicorn recover_net.core.app:app --reload --port 8000
 ```
 
 The API is now running at `http://localhost:8000`.
 
-**Docker one-command start**
+### Docker one-command start
 
-After configuring `.env`, run the complete API and PostgreSQL stack with:
+After configuring `.env`, start the complete API and PostgreSQL stack with:
 
 ```bash
 docker compose up --build
 ```
 
-Compose waits for PostgreSQL, applies migrations, and starts the API on port `8000`.
-
 ---
 
-## API reference
+## API Reference
 
 ### Health check
 
-```
+```http
 GET /health
 ```
 
-Returns the service status.
-
-**Response**
-
+**Response `200 OK`**:
 ```json
 {
   "status": "ok",
@@ -103,8 +100,9 @@ Returns the service status.
 
 ### Ingest a payment failure
 
-```
+```http
 POST /webhook/payment-failure
+Header: X-Webhook-Signature: sha256=<hmac_hex_digest>
 ```
 
 Stores the event in the database with PII masked. Does not run classification or guardrail logic.
@@ -116,7 +114,7 @@ Stores the event in the database with PII masked. Does not run classification or
   "transaction_id": "txn_abc123",
   "user_email": "user@example.com",
   "phone": "+91-9876543210",
-  "merchant_id": "merchant-acme",
+  "merchant_id": "default",
   "amount": 4999.00,
   "error_code": "insufficient_funds",
   "past_success_rate": 0.82
@@ -125,23 +123,24 @@ Stores the event in the database with PII masked. Does not run classification or
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `transaction_id` | string | No | Your external transaction ID. Stored as `source_transaction_id`. |
-| `user_email` | string | Yes | User's email. Pseudonymized before storage. |
-| `phone` | string | Yes | User's phone number. Pseudonymized before storage. |
-| `amount` | number | Yes | Transaction amount. |
-| `error_code` | string | Yes | Failure reason (e.g. `insufficient_funds`, `gateway_timeout`, `fraud_suspected`). |
-| `past_success_rate` | number | No | Historical payment success rate for this user (0.0–1.0). |
+| `transaction_id` | string | No | External gateway transaction ID. Stored as `source_transaction_id`. |
+| `user_email` | string | Yes | Customer email. Pseudonymized via BlindLog before storage. |
+| `phone` | string | Yes | Customer phone. Pseudonymized via BlindLog before storage. |
+| `merchant_id` | string | No | Merchant ID (defaults to `default`). Must be registered in `merchant_policies`. |
+| `amount` | number | Yes | Transaction amount in currency units. |
+| `error_code` | string | Yes | Gateway error reason (`insufficient_funds`, `gateway_timeout`, `fraud_suspected`, `invalid_cvv`). |
+| `past_success_rate` | number | No | Customer historical payment success rate (0.0–1.0). |
 
-**Response** `201 Created`
+**Response `201 Created`**:
 
 ```json
 {
   "status": "success",
   "message": "Payment failure webhook ingested successfully",
-  "transaction_id": "a1b2c3d4-...",
+  "transaction_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "source_transaction_id": "txn_abc123",
-  "masked_user_email": "blnd_e3f7a...",
-  "masked_phone": "blnd_91c4b..."
+  "masked_user_email": "blnd_ref_e3f7a...",
+  "masked_phone": "blind:91c4b..."
 }
 ```
 
@@ -149,23 +148,20 @@ Stores the event in the database with PII masked. Does not run classification or
 
 ### Run the full recovery pipeline
 
-```
+```http
 POST /webhook/payment-failure/recover
+Header: X-Webhook-Signature: sha256=<hmac_hex_digest>
 ```
 
-Runs the complete pipeline: ingest → classify → guardrail → audit log. Returns the final recovery action with full decision provenance.
+Runs the complete pipeline: ingest → Groq LPU classify → Dynamic guardrail → Audit log write.
 
-**Request body**
-
-Same schema as `POST /webhook/payment-failure`.
-
-**Response** `201 Created`
+**Response `201 Created`**:
 
 ```json
 {
   "status": "success",
-  "transaction_id": "a1b2c3d4-...",
-  "audit_log_id": "f9e8d7c6-...",
+  "transaction_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "audit_log_id": "f9e8d7c6-b5a4-3210-fedc-ba9876543210",
   "llm_proposed_intent": "offer_emi",
   "llm_confidence": 0.91,
   "final_intent": "offer_emi",
@@ -182,180 +178,54 @@ Same schema as `POST /webhook/payment-failure`.
 }
 ```
 
-| Field | Type | Description |
-|---|---|---|
-| `transaction_id` | string | Internal UUID of the stored transaction. |
-| `audit_log_id` | string | UUID of the written audit log entry. |
-| `llm_proposed_intent` | string | What the LLM originally recommended. |
-| `llm_confidence` | number | LLM confidence score (0.0–1.0). |
-| `final_intent` | string | The validated action to execute. |
-| `final_status` | string | Status label written to the audit log. |
-| `guardrail_overridden` | boolean | `true` if the guardrail corrected the LLM. |
-| `rule_applied` | string \| null | The guardrail rule that fired, or `null` if the LLM was correct. |
-| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
-| `modified_parameters` | object \| null | Proposed, applied, and maximum allowed values when policy clamps a parameter. |
+---
+
+## Guardrail Rules & Actions
+
+| Rule | Condition | Outcome | Action |
+|---|---|---|---|
+| `RULE_FRAUD_ESCALATE` | `error_code == "fraud_suspected"` and LLM did not escalate | Force `escalate_to_human` | `OVERRIDDEN` |
+| `RULE_INVALID_CVV_ESCALATE` | `error_code == "invalid_cvv"` and LLM did not escalate | Force `escalate_to_human` | `OVERRIDDEN` |
+| `RULE_HIGH_RISK_ESCALATE` | `amount > 10,000` and `past_success_rate < 0.2` | Force `escalate_to_human` | `OVERRIDDEN` |
+| `RULE_TIMEOUT_EMI_CORRECT` | `error_code == "gateway_timeout"` and LLM proposed `offer_emi` | Correct to `retry_now` | `OVERRIDDEN` |
+| `RULE_DISCOUNT_CLAMP` | Proposed EMI discount exceeds merchant's `max_discount_allowed` | Clamp to merchant ceiling | `MODIFIED` |
 
 ---
 
-## Recovery intents
+## Batch Processing Engine
 
-| Intent | Meaning |
-|---|---|
-| `retry_now` | Transient failure — retry the charge immediately. |
-| `offer_emi` | Insufficient funds on a high-value transaction — offer a payment plan. |
-| `escalate_to_human` | Suspected fraud, repeated CVV failures, or very poor customer history. |
-
----
-
-## Guardrail rules
-
-The guardrail evaluates rules in priority order. The first match wins.
-
-| Rule | Condition | Override |
-|---|---|---|
-| `RULE_FRAUD_ESCALATE` | `error_code == "fraud_suspected"` and LLM did not propose escalation | Forces `escalate_to_human` |
-| `RULE_HIGH_RISK_ESCALATE` | `amount > 10,000` and `past_success_rate < 0.2` | Forces `escalate_to_human` |
-| `RULE_TIMEOUT_EMI_CORRECT` | `error_code == "gateway_timeout"` and LLM proposed `offer_emi` | Corrects to `retry_now` |
-| `RULE_DISCOUNT_CLAMP` | EMI discount exceeds the merchant's `max_discount_allowed` | Keeps `offer_emi`, clamps discount, sets `action` to `MODIFIED` |
-
-If no rule fires, the LLM's decision passes through unchanged. A policy modification is not a rejection: the intent remains `offer_emi`, but the bounded parameter must be used.
-
----
-
-## Error responses
-
-Recover-Net returns standard HTTP error codes with a `detail` field.
-
-| Status | Cause |
-|---|---|
-| `409 Conflict` | A transaction with this `transaction_id` has already been processed. |
-| `422 Unprocessable Entity` | The request body is missing required fields. |
-| `500 Internal Server Error` | PII masking failed, or an unexpected error occurred. A masking failure is a hard stop — the request is rejected rather than stored with unmasked data. |
-
-**Example error**
-
-```json
-{
-  "detail": "Webhook event with transaction_id 'txn_abc123' has already been processed."
-}
-```
-
----
-
-## Batch processing
-
-For load testing or bulk replay, use the included batch runner. It fires transactions concurrently using `asyncio` + `aiohttp`, renders live Rich progress, and prints a colored decision ledger with audit references.
-
-**Generate a test batch**
+Generate synthetic workloads and run concurrent batch recovery simulations:
 
 ```bash
+# 1. Generate poisoned workload (60% standard, 20% high-risk, 20% fraud)
 uv run python scripts/generate_batch.py
-```
 
-This creates `batch_payload.json` with a mix of normal, fraud, high-risk, and timeout transactions.
+# 2. Fire concurrent requests (signed with $WEBHOOK_SECRET)
+uv run python scripts/batch_runner.py --concurrency 5
 
-**Run the batch**
-
-```bash
-uv run python scripts/batch_runner.py
-```
-
-```bash
-# Custom target and concurrency
-uv run python scripts/batch_runner.py --url http://localhost:8000 --concurrency 10
-
-# Write full results to a JSON file
+# 3. Export detailed financial audit results
 uv run python scripts/batch_runner.py --report-json batch_results.json
 ```
 
-**Sample output**
-
-```
-=====================================================
-      RECOVER-NET: BATCH EXECUTION REPORT
-=====================================================
-  Total Failed Transactions Processed : 25
-  Total Value at Risk                  : ₹4,87,500
-  Processing Time                      : 6.43 seconds
-  Average Latency per Webhook          : ~257 ms (via Groq LPUs)
-
-  --- REVENUE RECOVERED ---
-  Recovered via Automated Retry        : 12 (₹1,20,000)
-  Recovered via EMI Intervention       : 5 (₹87,500)
-  Total Revenue Secured                : ₹2,07,500 (42.6%)
-
-  --- COMPLIANCE & ESCALATION ---
-  Escalated to Human Review            : 8
-  Fraud Attempts Blocked by Guardrail  : 5
-  PII Leaks Detected in Logs           : 0 (Secured via BlindLog)
-=====================================================
-```
-
 ---
 
-## PII and security
-
-All email addresses and phone numbers are pseudonymized using [BlindLog](https://pypi.org/project/blindlog/) before any data is written to the database, passed to the LLM, or logged.
-
-- Masking is **deterministic** — the same input always produces the same token, so you can correlate records without ever storing the raw value.
-- Masking is a **hard stop** — if BlindLog cannot mask a field, the request is rejected with a `500` error. Recover-Net never stores unmasked PII.
-- `BLINDLOG_SECRET` is required at startup. The server refuses to run without it.
-- `BLINDLOG_DEBUG=true` is explicitly blocked in production paths.
-
----
-
-## Database schema
-
-**`transactions`**
-
-| Column | Type | Notes |
-|---|---|---|
-| `transaction_id` | UUID | Internal primary key. Always generated server-side. |
-| `source_transaction_id` | string | Your external transaction ID. Unique. |
-| `user_email` | string | BlindLog-pseudonymized email. |
-| `phone` | string | BlindLog-pseudonymized phone. |
-| `amount` | decimal | Transaction amount. |
-| `error_code` | string | Failure reason from the webhook. |
-| `past_success_rate` | float | Historical success rate (nullable). |
-| `merchant_id` | string | Merchant policy key; defaults to `default`. |
-| `raw_payload` | JSON | Full webhook payload with PII masked. |
-| `created_at` | timestamp | Ingestion time (server default). |
-
-**`merchant_policies`** stores `max_discount_allowed` for each merchant. **`audit_logs`** stores `action` and `modified_parameters` whenever the guardrail bounds a financial parameter.
-
-**`audit_logs`**
-
-| Column | Type | Notes |
-|---|---|---|
-| `log_id` | UUID | Primary key. |
-| `transaction_id` | UUID | Foreign key to `transactions`. |
-| `llm_proposed_action` | text | Serialized `RecoveryDecision` JSON. |
-| `guardrail_decision` | text | Serialized `GuardrailResult` JSON. |
-| `action` | string | `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
-| `modified_parameters` | JSON | Proposed, applied, and maximum allowed values for a clamped parameter. |
-| `final_status` | string | `RETRIED`, `EMI_OFFERED`, or `ESCALATED`. |
-| `timestamp` | timestamp | Decision time (server default). |
-
----
-
-## Running tests
+## Running Automated Tests
 
 ```bash
 uv run pytest
 ```
 
-Tests cover the classifier, guardrail, models, security layer, webhook endpoints, and the full pipeline.
+All 88 tests validate classifier tool schemas, prompt sanitization, model boundaries, guardrail rules, HMAC authentication, and full pipeline integration.
 
 ---
 
-## Tech stack
+## Tech Stack
 
-| Component | Technology |
-|---|---|
-| API framework | [FastAPI](https://fastapi.tiangolo.com) |
-| LLM inference | [Groq](https://groq.com) (structured JSON output, sub-200ms) |
-| PII masking | [BlindLog](https://pypi.org/project/blindlog/) |
-| Database | PostgreSQL via SQLAlchemy 2.0 |
-| Migrations | Alembic |
-| Async HTTP | aiohttp |
-| Runtime | Python 3.12+, [uv](https://docs.astral.sh/uv/) |
+| Layer | Component | Details |
+|---|---|---|
+| **API Framework** | [FastAPI](https://fastapi.tiangolo.com) | Async ASGI application with lifespan secret validation |
+| **LLM Inference** | [Groq](https://groq.com) | Sub-200ms structured JSON schema completion |
+| **PII Protection** | [BlindLog](https://pypi.org/project/blindlog/) | Column-level and ASGI-level deterministic hashing |
+| **Database** | PostgreSQL 16 & SQLAlchemy 2.0 | Transactional persistence with atomic commit boundaries |
+| **Migrations** | Alembic | Version-controlled schema migrations |
+| **Testing** | pytest & pytest-asyncio | 88 tests covering ORM, API, guardrails, and security |
