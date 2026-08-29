@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 
 from recover_net.db.models import AuditLog, MerchantPolicy, Transaction
 from recover_net.engine.pipeline import INTENT_TO_STATUS, run_recovery_pipeline
+from tests.conftest import sign_payload
 
 
 # ---------------------------------------------------------------------------
@@ -317,6 +318,15 @@ class TestDatabaseWrites:
         assert log.action == "MODIFIED"
         assert log.modified_parameters == result.modified_parameters
 
+    def test_unknown_merchant_raises_value_error(self, db_session: Session):
+        """Pipeline must fail-closed if merchant_id is not in merchant_policies table."""
+        with pytest.raises(ValueError, match="Unknown or unconfigured merchant_id"):
+            run_recovery_pipeline(
+                _fresh_payload(merchant_id="unregistered_merchant_xyz"),
+                db_session,
+                groq_client=_mock_groq_client("retry_now"),
+            )
+
 
 # ---------------------------------------------------------------------------
 # Status label mapping
@@ -349,10 +359,15 @@ class TestRecoverEndpoint:
 
     def test_recover_endpoint_returns_201_on_success(self, client: TestClient):
         payload = _fresh_payload(error_code="gateway_timeout", amount=500)
+        content, headers = sign_payload(payload)
         with patch("recover_net.engine.pipeline.classify_payment_failure") as mock_classify:
             from recover_net.llm.classifier import RecoveryDecision
             mock_classify.return_value = RecoveryDecision(intent="retry_now", confidence=0.91)
-            response = client.post("/webhook/payment-failure/recover", json=payload)
+            response = client.post(
+                "/webhook/payment-failure/recover",
+                content=content,
+                headers=headers,
+            )
 
         assert response.status_code == 201
         body = response.json()
@@ -365,10 +380,15 @@ class TestRecoverEndpoint:
 
     def test_recover_endpoint_returns_guardrail_override_fields(self, client: TestClient):
         payload = _fresh_payload(error_code="fraud_suspected", amount=500)
+        content, headers = sign_payload(payload)
         with patch("recover_net.engine.pipeline.classify_payment_failure") as mock_classify:
             from recover_net.llm.classifier import RecoveryDecision
             mock_classify.return_value = RecoveryDecision(intent="retry_now", confidence=0.80)
-            response = client.post("/webhook/payment-failure/recover", json=payload)
+            response = client.post(
+                "/webhook/payment-failure/recover",
+                content=content,
+                headers=headers,
+            )
 
         assert response.status_code == 201
         body = response.json()
@@ -378,13 +398,39 @@ class TestRecoverEndpoint:
         assert body["llm_proposed_intent"] == "retry_now"
 
     def test_recover_endpoint_422_on_missing_fields(self, client: TestClient):
-        response = client.post("/webhook/payment-failure/recover", json={})
+        payload = {}
+        content, headers = sign_payload(payload)
+        response = client.post(
+            "/webhook/payment-failure/recover",
+            content=content,
+            headers=headers,
+        )
         assert response.status_code == 422
+
+    def test_recover_endpoint_rejects_unknown_merchant_with_422(self, client: TestClient):
+        """Unknown merchant in webhook body is rejected with 422, not silently defaulted."""
+        payload = _fresh_payload(merchant_id="unregistered_merchant_xyz")
+        content, headers = sign_payload(payload)
+        with patch("recover_net.engine.pipeline.classify_payment_failure") as mock_classify:
+            from recover_net.llm.classifier import RecoveryDecision
+            mock_classify.return_value = RecoveryDecision(intent="retry_now", confidence=0.90)
+            response = client.post(
+                "/webhook/payment-failure/recover",
+                content=content,
+                headers=headers,
+            )
+        assert response.status_code == 422
+        assert "Unknown or unconfigured merchant_id" in response.json()["detail"]
 
     def test_existing_ingest_endpoint_still_works(self, client: TestClient):
         """The original /webhook/payment-failure endpoint must not be broken."""
         payload = _fresh_payload()
-        response = client.post("/webhook/payment-failure", json=payload)
+        content, headers = sign_payload(payload)
+        response = client.post(
+            "/webhook/payment-failure",
+            content=content,
+            headers=headers,
+        )
         assert response.status_code == 201
         assert response.json()["status"] == "success"
 

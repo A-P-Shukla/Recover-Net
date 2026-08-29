@@ -22,6 +22,7 @@ from sqlalchemy.orm import Session
 
 from recover_net.db.session import get_db
 from recover_net.core.app import app
+from tests.conftest import sign_payload
 
 
 @pytest.fixture
@@ -42,11 +43,10 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(
     """
     Fires a mock webhook payload from failed_webhooks.json at the endpoint.
     Verifies that:
-    1. The HTTP request succeeds (201 Created).
+    1. The HTTP request succeeds (201 Created) when signed with HMAC.
     2. The terminal/middleware logs contain the hashed email and phone.
     3. The raw email and raw phone are NEVER emitted in logs.
     """
-    # Load mock webhook payload
     mock_file = ROOT_DIR / "failed_webhooks.json"
     with open(mock_file, "r", encoding="utf-8") as f:
         mock_payloads = json.load(f)
@@ -58,7 +58,12 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(
     # Capture logs from blindlog.middleware at INFO level
     caplog.set_level(logging.INFO)
 
-    response = client.post("/webhook/payment-failure", json=sample_payload)
+    content, headers = sign_payload(sample_payload)
+    response = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers=headers,
+    )
 
     # 1. Verify HTTP Response
     assert response.status_code == 201
@@ -67,8 +72,6 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(
     assert resp_data["source_transaction_id"] == sample_payload["transaction_id"]
     assert resp_data["masked_user_email"] != raw_email
     assert resp_data["masked_phone"] != raw_phone
-    # Masked value should look like a BlindLog token (not the original)
-    assert resp_data["masked_user_email"] != raw_email
 
     # 2. Inspect captured terminal logs
     captured_logs = caplog.text
@@ -85,6 +88,57 @@ def test_payment_failure_webhook_endpoint_logs_masked_pii(
     assert raw_phone not in captured_logs, f"Security Violation: Raw phone {raw_phone} was found in terminal logs!"
 
 
+def test_webhook_rejects_missing_signature(client: TestClient) -> None:
+    """Reject request without signature header (401)."""
+    payload = {"amount": 500, "error_code": "gateway_timeout"}
+    content, _ = sign_payload(payload)
+    response = client.post("/webhook/payment-failure", content=content)
+    assert response.status_code == 401
+    assert "Missing X-Webhook-Signature header" in response.json()["detail"]
+
+
+def test_webhook_rejects_invalid_signature_prefix(client: TestClient) -> None:
+    """Reject request with bad prefix (401)."""
+    payload = {"amount": 500, "error_code": "gateway_timeout"}
+    content, _ = sign_payload(payload)
+    response = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers={"X-Webhook-Signature": "md5=12345"},
+    )
+    assert response.status_code == 401
+    assert "must use sha256= prefix" in response.json()["detail"]
+
+
+def test_webhook_rejects_invalid_signature(client: TestClient) -> None:
+    """Reject request with tampered/invalid signature (401)."""
+    payload = {"amount": 500, "error_code": "gateway_timeout"}
+    content, _ = sign_payload(payload)
+    response = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers={"X-Webhook-Signature": "sha256=0000000000000000000000000000000000000000000000000000000000000000"},
+    )
+    assert response.status_code == 401
+    assert "Invalid webhook signature" in response.json()["detail"]
+
+
+def test_webhook_fails_closed_when_secret_unset(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """If WEBHOOK_SECRET is unset, server fails closed with 500."""
+    monkeypatch.delenv("WEBHOOK_SECRET", raising=False)
+    payload = {"amount": 500, "error_code": "gateway_timeout"}
+    content, _ = sign_payload(payload)
+    response = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers={"X-Webhook-Signature": "sha256=dummy"},
+    )
+    assert response.status_code == 500
+    assert "WEBHOOK_SECRET is missing" in response.json()["detail"]
+
+
 def test_payment_failure_webhook_rejects_duplicate_transaction(client: TestClient) -> None:
     """Verifies that replaying an existing webhook transaction_id returns 409 Conflict."""
     payload: Dict[str, Any] = {
@@ -96,10 +150,19 @@ def test_payment_failure_webhook_rejects_duplicate_transaction(client: TestClien
         "past_success_rate": 0.85,
     }
 
-    res1 = client.post("/webhook/payment-failure", json=payload)
+    content, headers = sign_payload(payload)
+    res1 = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers=headers,
+    )
     assert res1.status_code == 201
 
-    res2 = client.post("/webhook/payment-failure", json=payload)
+    res2 = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers=headers,
+    )
     assert res2.status_code == 409
     assert "already been processed" in res2.json()["detail"]
 
@@ -110,7 +173,12 @@ def test_payment_failure_webhook_rejects_missing_fields(client: TestClient) -> N
         "amount": 500,
         "error_code": "invalid_cvv",
     }
-    response = client.post("/webhook/payment-failure", json=invalid_payload)
+    content, headers = sign_payload(invalid_payload)
+    response = client.post(
+        "/webhook/payment-failure",
+        content=content,
+        headers=headers,
+    )
     assert response.status_code == 422
 
 

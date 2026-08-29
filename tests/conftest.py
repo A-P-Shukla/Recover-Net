@@ -1,34 +1,51 @@
-"""
-Shared pytest fixtures.
-
-Sets BLINDLOG_SECRET before application imports so hashing never sees an empty
-key. Each test gets its own in-memory SQLite session wrapped in a transaction
-that is rolled back at teardown.
-"""
-
+import hashlib
+import hmac
+import json
 import os
-from typing import Any, Generator
+from typing import Any, Dict, Generator
 
 import pytest
 from sqlalchemy.pool import StaticPool
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
-os.environ.setdefault("BLINDLOG_SECRET", "pytest-only-secret-not-for-production")
+TEST_SECRET = "pytest-only-secret-not-for-production"
+TEST_WEBHOOK_SECRET = "pytest-webhook-secret-not-for-production"
+TEST_GROQ_KEY = "pytest-mock-groq-key"
+
+os.environ.setdefault("BLINDLOG_SECRET", TEST_SECRET)
+os.environ.setdefault("WEBHOOK_SECRET", TEST_WEBHOOK_SECRET)
+os.environ.setdefault("GROQ_API_KEY", TEST_GROQ_KEY)
 os.environ.pop("BLINDLOG_DEBUG", None)
-os.environ.pop("WEBHOOK_SECRET", None)
 
 from recover_net.db.session import init_db  # noqa: E402
 from recover_net.core.security import clear_logger_cache  # noqa: E402
 
-TEST_SECRET = "pytest-only-secret-not-for-production"
+
+def sign_payload(
+    payload: Any, secret: str = TEST_WEBHOOK_SECRET
+) -> tuple[bytes, Dict[str, str]]:
+    """Helper to compute exact raw bytes and valid HMAC-SHA256 headers for testing webhooks."""
+    if isinstance(payload, bytes):
+        raw_bytes = payload
+    elif isinstance(payload, str):
+        raw_bytes = payload.encode("utf-8")
+    else:
+        raw_bytes = json.dumps(payload).encode("utf-8")
+    sig = hmac.new(secret.encode("utf-8"), raw_bytes, hashlib.sha256).hexdigest()
+    headers = {
+        "Content-Type": "application/json",
+        "X-Webhook-Signature": f"sha256={sig}",
+    }
+    return raw_bytes, headers
 
 
 @pytest.fixture(autouse=True)
 def _configure_blindlog(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
     monkeypatch.setenv("BLINDLOG_SECRET", TEST_SECRET)
+    monkeypatch.setenv("WEBHOOK_SECRET", TEST_WEBHOOK_SECRET)
+    monkeypatch.setenv("GROQ_API_KEY", TEST_GROQ_KEY)
     monkeypatch.delenv("BLINDLOG_DEBUG", raising=False)
-    monkeypatch.delenv("WEBHOOK_SECRET", raising=False)
     clear_logger_cache()
     yield
     clear_logger_cache()
