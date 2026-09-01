@@ -5,7 +5,7 @@
 Recover-Net is designed to fail closed, protect customer data, and enforce deterministic business rules before any recovery action is allowed.
 
 - HMAC Validation: every inbound webhook must present a valid `X-Webhook-Signature: sha256=<hex>` signature signed with `WEBHOOK_SECRET`; invalid or missing signatures are rejected with `401 Unauthorized`.
-- Fail-Closed Secrets: startup aborts immediately if `BLINDLOG_SECRET`, `GROQ_API_KEY`, or `WEBHOOK_SECRET` are missing; the application refuses to run in a misconfigured state.
+- Fail-Closed Secrets: startup aborts immediately if `BLINDLOG_SECRET`, `OPENAI_API_KEY`, or `WEBHOOK_SECRET` are missing; the application refuses to run in a misconfigured state.
 - Deterministic PII Masking: email and phone values are masked with BlindLog before storage, before logging, and before any LLM prompt assembly, preventing raw PII from leaving the trust boundary.
 - 88 Passing Tests: the project has been verified with `uv run pytest -q`, and the current suite passes with 88/88 tests green, covering security, guardrails, schema validation, and end-to-end pipeline behavior.
 
@@ -28,7 +28,7 @@ A payment failure event arrives as an HMAC-signed webhook. Recover-Net executes 
 ```
 Inbound Webhook (signed with HMAC-SHA256)
     → BlindLog PII Masking          (email + phone pseudonymized before any processing)
-    → Groq LLM Classifier           (intent: retry_now | offer_emi | escalate_to_human)
+    → AWS Bedrock Classifier      (intent: retry_now | offer_emi | escalate_to_human)
     → Dynamic Policy Guardrail       (hard rules override; merchant limits clamp parameters)
     → Immutable Audit Log Write     (full decision provenance committed atomically)
 ```
@@ -39,7 +39,7 @@ The guardrail is pure Python — no probability, no hallucination risk. It evalu
 
 ## Quickstart
 
-**Requirements:** Python 3.12+, PostgreSQL 16, a [Groq API key](https://console.groq.com), and [uv](https://docs.astral.sh/uv/).
+**Requirements:** Python 3.12+, PostgreSQL 16, an [AWS Bedrock](https://console.aws.amazon.com/bedrock/) API key, and [uv](https://docs.astral.sh/uv/).
 
 ### 1. Clone and install
 
@@ -61,8 +61,9 @@ cp .env.example .env
 |---|---|---|---|
 | `DATABASE_URL` | Yes | `postgresql+psycopg2://postgres:postgres@localhost:5432/recover_net` | PostgreSQL connection string |
 | `BLINDLOG_SECRET` | Yes | — | Secret key for deterministic PII pseudonymization |
-| `GROQ_API_KEY` | Yes | — | Groq API key for LPU structured inference |
-| `GROQ_MODEL_ID` | No | `openai/gpt-oss-20b` | Model identifier |
+| `OPENAI_API_KEY` | Yes | — | AWS Bedrock bearer token / API key |
+| `OPENAI_BASE_URL` | Yes | — | Bedrock OpenAI-compatible endpoint |
+| `BEDROCK_MODEL` | No | `mistral.ministral-3-8b-instruct` | Bedrock model ID for classification |
 | `WEBHOOK_SECRET` | Yes | — | Secret key for HMAC-SHA256 request signature verification |
 
 ### 3. Run database migrations
@@ -162,7 +163,7 @@ POST /webhook/payment-failure/recover
 Header: X-Webhook-Signature: sha256=<hmac_hex_digest>
 ```
 
-Runs the complete pipeline: ingest → Groq LPU classify → Dynamic guardrail → Audit log write.
+Runs the complete pipeline: ingest → AWS Bedrock classify → Dynamic guardrail → Audit log write.
 
 **Response `201 Created`**:
 
@@ -233,7 +234,7 @@ All 88 tests validate classifier tool schemas, prompt sanitization, model bounda
 | Layer | Component | Details |
 |---|---|---|
 | **API Framework** | [FastAPI](https://fastapi.tiangolo.com) | Async ASGI application with lifespan secret validation |
-| **LLM Inference** | [Groq](https://groq.com) | Sub-200ms structured JSON schema completion |
+| **LLM Inference** | [AWS Bedrock](https://aws.amazon.com/bedrock/) | `mistral.ministral-3-8b-instruct` via OpenAI-compatible endpoint, ~10,000 RPM on-demand |
 | **PII Protection** | [BlindLog](https://pypi.org/project/blindlog/) | Column-level and ASGI-level deterministic hashing |
 | **Database** | PostgreSQL 16 & SQLAlchemy 2.0 | Transactional persistence with atomic commit boundaries |
 | **Migrations** | Alembic | Version-controlled schema migrations |
