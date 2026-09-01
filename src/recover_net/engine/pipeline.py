@@ -3,13 +3,13 @@ engine/pipeline.py
 
 The Orchestrator — central nervous system of Recover-Net.
 
-Wires Phase 1 (Groq classifier) to Phase 2 (deterministic guardrail) and
+Wires Phase 1 (Bedrock classifier) to Phase 2 (deterministic guardrail) and
 writes an immutable audit log entry for every decision made.
 
 Pipeline:
     raw_payload
         → BlindLog sanitization          (PII destroyed, GDPR/DPDP compliant)
-        → classify_payment_failure()     (Groq LPU, <200ms)
+        → classify_payment_failure()     (AWS Bedrock inference)
         → evaluate_action()              (deterministic guardrail, pure Python)
         → AuditLog INSERT                (immutable ledger write)
         → RecoveryResult
@@ -58,7 +58,7 @@ class RecoveryResult:
     Attributes:
         transaction_id:  Internal UUID of the ingested Transaction row.
         audit_log_id:    UUID of the written AuditLog row.
-        llm_intent:      Raw intent proposed by the Groq classifier.
+        llm_intent:      Raw intent proposed by the Bedrock classifier.
         llm_confidence:  Confidence score from the classifier (0.0–1.0).
         final_intent:    Guardrail-validated action to execute.
         overridden:      True when the guardrail corrected the AI.
@@ -97,8 +97,8 @@ class RecoveryResult:
 def run_recovery_pipeline(
     raw_payload: Dict[str, Any],
     db: Session,
-    groq_client: Optional[Any] = None,
-    groq_model: Optional[str] = None,
+    llm_client: Optional[Any] = None,
+    llm_model: Optional[str] = None,
     secret_key: Optional[str] = None,
 ) -> RecoveryResult:
     """
@@ -107,7 +107,7 @@ def run_recovery_pipeline(
     Steps:
         1. Ingest raw payload → Transaction row (BlindLog masks PII).
         2. Sanitize payload again for the LLM call (no PII leaves the system).
-        3. Call Groq classifier → RecoveryDecision.
+        3. Call Bedrock classifier → RecoveryDecision.
         4. Apply deterministic guardrail → GuardrailResult.
         5. Write AuditLog row with full decision provenance.
         6. Caller commits atomically at the HTTP boundary.
@@ -115,8 +115,8 @@ def run_recovery_pipeline(
     Parameters:
         raw_payload:  Raw inbound webhook dictionary.
         db:           SQLAlchemy Session (caller manages lifecycle).
-        groq_client:  Optional Groq client override (for testing/mocking).
-        groq_model:   Optional model ID override.
+        llm_client:  Optional LLM client override (for testing/mocking).
+        llm_model:   Optional model ID override.
         secret_key:   Optional BlindLog secret key override.
 
     Returns:
@@ -124,7 +124,7 @@ def run_recovery_pipeline(
 
     Raises:
         ValueError:    Payload is missing required fields.
-        RuntimeError:  Groq API returned an unusable response.
+        RuntimeError:  Bedrock API returned an unusable response.
         MaskingError:  PII could not be masked (security hard-stop).
     """
     # ------------------------------------------------------------------
@@ -143,21 +143,21 @@ def run_recovery_pipeline(
     )
 
     # ------------------------------------------------------------------
-    # Step 2 — Classify: Groq LPU inference (<200ms)
+    # Step 2 — Classify: Bedrock inference
     # classify_payment_failure() calls mask_payload() internally —
     # we pass raw_payload so it sanitizes exactly once.
     # ------------------------------------------------------------------
-    groq_decision: RecoveryDecision = classify_payment_failure(
+    llm_decision: RecoveryDecision = classify_payment_failure(
         raw_payload,
-        client=groq_client,
-        model=groq_model,
+        client=llm_client,
+        model=llm_model,
         secret_key=secret_key,
     )
 
     logger.info(
-        "Groq decision: intent=%s confidence=%.2f",
-        groq_decision.intent,
-        groq_decision.confidence,
+        "Bedrock decision: intent=%s confidence=%.2f",
+        llm_decision.intent,
+        llm_decision.confidence,
     )
 
     # ------------------------------------------------------------------
@@ -178,8 +178,8 @@ def run_recovery_pipeline(
     max_discount_allowed = float(merchant_policy.max_discount_allowed)
     guardrail_result: GuardrailResult = evaluate_action(
         guardrail_input,
-        groq_decision.intent,
-        proposed_discount=groq_decision.discount,
+        llm_decision.intent,
+        proposed_discount=llm_decision.discount,
         max_discount_allowed=max_discount_allowed,
     )
 
@@ -203,13 +203,14 @@ def run_recovery_pipeline(
     audit_log = AuditLog(
         log_id=uuid.uuid4(),
         transaction_id=tx.transaction_id,
-        llm_proposed_action=json.dumps(groq_decision.to_dict()),
+        llm_proposed_action=json.dumps(llm_decision.to_dict()),
         guardrail_decision=json.dumps(guardrail_result.to_dict()),
         action=guardrail_result.action,
         modified_parameters=guardrail_result.modified_parameters,
         final_status=final_status,
     )
     db.add(audit_log)
+    db.flush()  # Ensure the new rows are attached to this Session and IDs are assigned.
 
     # ------------------------------------------------------------------
     # Step 5 — Stage complete: caller commits atomically
@@ -217,9 +218,6 @@ def run_recovery_pipeline(
     # belongs to the HTTP boundary (api/webhooks.py) so the session lifecycle
     # and rollback behaviour are controlled in one place.
     # ------------------------------------------------------------------
-    db.refresh(tx)
-    db.refresh(audit_log)
-
     logger.info(
         "Audit log written: log_id=%s final_status=%s overridden=%s",
         audit_log.log_id,
@@ -230,8 +228,8 @@ def run_recovery_pipeline(
     return RecoveryResult(
         transaction_id=tx.transaction_id,
         audit_log_id=audit_log.log_id,
-        llm_intent=groq_decision.intent,
-        llm_confidence=groq_decision.confidence,
+        llm_intent=llm_decision.intent,
+        llm_confidence=llm_decision.confidence,
         final_intent=guardrail_result.final_intent,
         overridden=guardrail_result.overridden,
         rule_applied=guardrail_result.rule_applied,

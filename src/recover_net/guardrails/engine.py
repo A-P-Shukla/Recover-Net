@@ -3,14 +3,14 @@ guardrails/engine.py
 
 The Deterministic Guardrail for Recover-Net.
 
-Validates the Groq classifier's intent recommendation against hard business rules
+Validates the Bedrock classifier's intent recommendation against hard business rules
 before any recovery action is executed. No ML, no probability — pure Python logic
 that cannot hallucinate.
 
 Usage:
     from recover_net.guardrails.engine import evaluate_action, GuardrailResult
 
-    result = evaluate_action(transaction_data, groq_intent)
+    result = evaluate_action(transaction_data, llm_intent)
     # result.final_intent  -> the safe, validated action
     # result.overridden    -> True if the guardrail corrected the AI
     # result.rule_applied  -> name of the rule that fired, or None
@@ -98,7 +98,7 @@ def evaluate_action(
                           - error_code (str)
                           - amount (int | float | Decimal)
                           - past_success_rate (float | None)
-        intent:           RecoveryIntent proposed by the Groq classifier.
+        intent:           RecoveryIntent proposed by the Bedrock classifier.
 
     Returns:
         GuardrailResult with the final safe intent and override metadata.
