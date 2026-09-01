@@ -11,11 +11,11 @@ from sqlalchemy.orm import Session, sessionmaker
 
 TEST_SECRET = "pytest-only-secret-not-for-production"
 TEST_WEBHOOK_SECRET = "pytest-webhook-secret-not-for-production"
-TEST_GROQ_KEY = "pytest-mock-groq-key"
+TEST_BEDROCK_KEY = "pytest-mock-bedrock-key"
 
 os.environ.setdefault("BLINDLOG_SECRET", TEST_SECRET)
 os.environ.setdefault("WEBHOOK_SECRET", TEST_WEBHOOK_SECRET)
-os.environ.setdefault("GROQ_API_KEY", TEST_GROQ_KEY)
+os.environ.setdefault("OPENAI_API_KEY", TEST_BEDROCK_KEY)
 os.environ.pop("BLINDLOG_DEBUG", None)
 
 from recover_net.db.session import init_db  # noqa: E402
@@ -44,7 +44,8 @@ def sign_payload(
 def _configure_blindlog(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
     monkeypatch.setenv("BLINDLOG_SECRET", TEST_SECRET)
     monkeypatch.setenv("WEBHOOK_SECRET", TEST_WEBHOOK_SECRET)
-    monkeypatch.setenv("GROQ_API_KEY", TEST_GROQ_KEY)
+    monkeypatch.setenv("OPENAI_API_KEY", TEST_BEDROCK_KEY)
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
     monkeypatch.delenv("BLINDLOG_DEBUG", raising=False)
     clear_logger_cache()
     yield

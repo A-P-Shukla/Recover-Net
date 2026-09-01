@@ -1,8 +1,8 @@
 """
 tests/test_classifier.py
 
-Unit tests for the Groq-Powered Brain (classifier.py).
-Uses native Groq SDK with JSON schema response_format — no tool calling.
+Unit tests for the AWS Bedrock classifier.
+Uses the OpenAI-compatible JSON schema response_format path.
 """
 
 import json
@@ -19,7 +19,7 @@ import pytest
 from pydantic import ValidationError
 
 from recover_net.llm.classifier import (
-    DEFAULT_GROQ_MODEL,
+    DEFAULT_BEDROCK_MODEL,
     RECOVERY_ROUTING_TOOL,
     RECOVERY_SCHEMA,
     RecoveryDecision,
@@ -28,10 +28,10 @@ from recover_net.llm.classifier import (
 
 
 def _make_mock_completion(arguments_dict: Dict[str, Any]) -> MagicMock:
-    """Build a mock Groq chat completion whose message.content is JSON."""
+    """Build a mock Bedrock chat completion whose message.content is JSON."""
     mock_message = MagicMock()
     mock_message.content = json.dumps(arguments_dict)
-    mock_message.tool_calls = None  # Groq JSON-schema path — no tool calls
+    mock_message.tool_calls = None  # Bedrock JSON-schema path — no tool calls
 
     mock_choice = MagicMock()
     mock_choice.message = mock_message
@@ -66,11 +66,11 @@ def test_recovery_routing_tool_backwards_compat():
 # Happy-path classification tests
 # ---------------------------------------------------------------------------
 
-def test_classify_payment_failure_sanitizes_pii_and_calls_groq():
+def test_classify_payment_failure_sanitizes_pii_and_calls_bedrock():
     """
     Verifies that:
     1. The payload is BlindLog-sanitized before sending to the model.
-    2. The correct model and response_format are passed to the Groq API.
+    2. The correct model and response_format are passed to the Bedrock API.
     3. The JSON content is parsed into a RecoveryDecision object.
     """
     raw_payload: Dict[str, Any] = {
@@ -99,7 +99,7 @@ def test_classify_payment_failure_sanitizes_pii_and_calls_groq():
     assert mock_client.chat.completions.create.called
     call_kwargs = mock_client.chat.completions.create.call_args.kwargs
 
-    assert call_kwargs["model"] == DEFAULT_GROQ_MODEL
+    assert call_kwargs["model"] == DEFAULT_BEDROCK_MODEL
     assert call_kwargs["temperature"] == 0.0
     assert call_kwargs["response_format"]["type"] == "json_schema"
     assert call_kwargs["response_format"]["json_schema"]["name"] == "recovery_action"
@@ -179,7 +179,7 @@ def test_classify_payment_failure_escalate_to_human():
 # ---------------------------------------------------------------------------
 
 def test_classify_payment_failure_raises_on_empty_content():
-    """Verifies RuntimeError when Groq returns empty message content."""
+    """Verifies RuntimeError when Bedrock returns empty message content."""
     mock_message = MagicMock()
     mock_message.content = ""
 
@@ -210,7 +210,7 @@ def test_classify_payment_failure_rejects_invalid_intent():
 
 
 def test_classify_payment_failure_rejects_invalid_json():
-    """Verifies RuntimeError when Groq response content is not valid JSON."""
+    """Verifies RuntimeError when Bedrock response content is not valid JSON."""
     mock_message = MagicMock()
     mock_message.content = "NOT_VALID_JSON"
 
@@ -219,7 +219,7 @@ def test_classify_payment_failure_rejects_invalid_json():
         choices=[MagicMock(message=mock_message)]
     )
 
-    with pytest.raises(RuntimeError, match="Failed to parse Groq response as JSON"):
+    with pytest.raises(RuntimeError, match="Failed to parse Bedrock response as JSON"):
         classify_payment_failure(
             {"user_email": "test@example.com", "phone": "+919999999999"},
             client=mock_client,

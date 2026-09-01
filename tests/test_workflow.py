@@ -1,9 +1,9 @@
 """
 tests/test_workflow.py
 
-Unit and integration tests for the Orchestrator (workflow.py).
+Unit and integration tests for the Orchestrator (pipeline.py).
 
-All Groq API calls are mocked — tests exercise the full pipeline logic
+All Bedrock API calls are mocked — tests exercise the full pipeline logic
 (ingestion → classification → guardrail → audit write) against an
 in-memory SQLite database via the shared db_session fixture.
 """
@@ -42,10 +42,10 @@ BASE_PAYLOAD: Dict[str, Any] = {
 }
 
 
-def _mock_groq_client(
+def _mock_llm_client(
     intent: str, confidence: float = 0.90, discount: float | None = None
 ) -> MagicMock:
-    """Build a mock Groq client that returns the given intent and confidence."""
+    """Build a mock Bedrock client that returns the given intent and confidence."""
     mock_message = MagicMock()
     response: Dict[str, Any] = {"intent": intent, "confidence": confidence}
     if discount is not None:
@@ -74,7 +74,7 @@ class TestRecoveryResult:
         result = run_recovery_pipeline(
             _fresh_payload(),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         d = result.to_dict()
         assert set(d.keys()) == {
@@ -92,7 +92,7 @@ class TestRecoveryResult:
         result = run_recovery_pipeline(
             _fresh_payload(),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         with pytest.raises((AttributeError, TypeError)):
             result.final_intent = "offer_emi"  # type: ignore[misc]
@@ -107,7 +107,7 @@ class TestHappyPath:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="gateway_timeout", amount=500),
             db_session,
-            groq_client=_mock_groq_client("retry_now", confidence=0.95),
+            llm_client=_mock_llm_client("retry_now", confidence=0.95),
         )
         assert result.final_intent == "retry_now"
         assert result.overridden is False
@@ -124,7 +124,7 @@ class TestHappyPath:
                 past_success_rate=0.65,
             ),
             db_session,
-            groq_client=_mock_groq_client("offer_emi", confidence=0.88),
+            llm_client=_mock_llm_client("offer_emi", confidence=0.88),
         )
         assert result.final_intent == "offer_emi"
         assert result.overridden is False
@@ -142,7 +142,7 @@ class TestHappyPath:
                 past_success_rate=0.9,
             ),
             db_session,
-            groq_client=_mock_groq_client("escalate_to_human", confidence=0.99),
+            llm_client=_mock_llm_client("escalate_to_human", confidence=0.99),
         )
         assert result.final_intent == "escalate_to_human"
         assert result.overridden is False
@@ -159,7 +159,7 @@ class TestGuardrailOverrides:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="fraud_suspected", amount=500, past_success_rate=0.9),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         assert result.final_intent == "escalate_to_human"
         assert result.llm_intent == "retry_now"
@@ -171,7 +171,7 @@ class TestGuardrailOverrides:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="fraud_suspected"),
             db_session,
-            groq_client=_mock_groq_client("offer_emi"),
+            llm_client=_mock_llm_client("offer_emi"),
         )
         assert result.final_intent == "escalate_to_human"
         assert result.rule_applied == "RULE_FRAUD_ESCALATE"
@@ -185,7 +185,7 @@ class TestGuardrailOverrides:
                 past_success_rate=0.05,
             ),
             db_session,
-            groq_client=_mock_groq_client("offer_emi"),
+            llm_client=_mock_llm_client("offer_emi"),
         )
         assert result.final_intent == "escalate_to_human"
         assert result.rule_applied == "RULE_HIGH_RISK_ESCALATE"
@@ -196,7 +196,7 @@ class TestGuardrailOverrides:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="gateway_timeout", amount=500, past_success_rate=0.8),
             db_session,
-            groq_client=_mock_groq_client("offer_emi"),
+            llm_client=_mock_llm_client("offer_emi"),
         )
         assert result.final_intent == "retry_now"
         assert result.llm_intent == "offer_emi"
@@ -215,7 +215,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             payload,
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         tx = db_session.get(Transaction, result.transaction_id)
         assert tx is not None
@@ -228,7 +228,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             _fresh_payload(),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
         assert log is not None
@@ -239,7 +239,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             _fresh_payload(),
             db_session,
-            groq_client=_mock_groq_client("retry_now", confidence=0.77),
+            llm_client=_mock_llm_client("retry_now", confidence=0.77),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
         assert log is not None
@@ -252,7 +252,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="fraud_suspected"),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
         assert log is not None
@@ -268,7 +268,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             _fresh_payload(error_code="gateway_timeout"),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         log = db_session.get(AuditLog, result.audit_log_id)
         assert log is not None
@@ -281,7 +281,7 @@ class TestDatabaseWrites:
         result = run_recovery_pipeline(
             _fresh_payload(),
             db_session,
-            groq_client=_mock_groq_client("retry_now"),
+            llm_client=_mock_llm_client("retry_now"),
         )
         tx = db_session.get(Transaction, result.transaction_id)
         assert tx is not None
@@ -301,7 +301,7 @@ class TestDatabaseWrites:
                 amount=35_000,
             ),
             db_session,
-            groq_client=_mock_groq_client("offer_emi", discount=15.0),
+            llm_client=_mock_llm_client("offer_emi", discount=15.0),
         )
 
         assert result.action == "MODIFIED"
@@ -324,7 +324,7 @@ class TestDatabaseWrites:
             run_recovery_pipeline(
                 _fresh_payload(merchant_id="unregistered_merchant_xyz"),
                 db_session,
-                groq_client=_mock_groq_client("retry_now"),
+                llm_client=_mock_llm_client("retry_now"),
             )
 
 
