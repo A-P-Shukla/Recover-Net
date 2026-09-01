@@ -1,9 +1,15 @@
 """
 llm/classifier.py
 
-The Groq-Powered Brain for Recover-Net.
-Uses the native Groq Python SDK with JSON schema response_format for
-structured, sub-200ms classification — no LangChain, no tool-calling overhead.
+The AWS Bedrock classification layer for Recover-Net.
+Uses the OpenAI-compatible Python SDK pointed at the Bedrock endpoint
+(bedrock-mantle or bedrock-runtime) for structured JSON-schema responses.
+
+Required environment variables:
+    OPENAI_API_KEY   — AWS Bedrock bearer token / API key
+    OPENAI_BASE_URL  — Bedrock OpenAI-compatible endpoint
+                       e.g. https://bedrock-mantle.ap-southeast-2.api.aws/v1
+    BEDROCK_MODEL    — Bedrock model ID (default: mistral.ministral-3-8b-instruct)
 """
 
 import json
@@ -11,17 +17,20 @@ import os
 from typing import Any, Dict, Literal, Optional
 
 from dotenv import load_dotenv
-from groq import Groq
+from openai import OpenAI
 from pydantic import BaseModel, Field
 
 from recover_net.core.security import mask_payload
 
 load_dotenv()
 
-# Groq model identifier
-DEFAULT_GROQ_MODEL = os.getenv("GROQ_MODEL_ID", "openai/gpt-oss-20b")
+# Bedrock model identifier — override via BEDROCK_MODEL env var.
+DEFAULT_BEDROCK_MODEL = os.getenv(
+    "BEDROCK_MODEL",
+    "mistral.ministral-3-8b-instruct",
+)
 
-# JSON schema used with Groq's response_format to guarantee structured output
+# JSON schema used with Bedrock's response_format to guarantee structured output
 RECOVERY_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {
@@ -56,7 +65,7 @@ RecoveryIntent = Literal["retry_now", "offer_emi", "escalate_to_human"]
 
 
 class RecoveryDecision(BaseModel):
-    """Structured decision returned by the Groq classification engine."""
+    """Structured decision returned by the Bedrock classification engine."""
 
     intent: RecoveryIntent = Field(
         ...,
@@ -83,19 +92,26 @@ class RecoveryDecision(BaseModel):
         return result
 
 
-def get_groq_client() -> Groq:
+def get_bedrock_client() -> OpenAI:
     """
-    Initializes and returns a native Groq client.
-    Fails closed if GROQ_API_KEY is missing or empty.
-    A per-request timeout of 30 s is set to prevent hung workers.
+    Initializes and returns an OpenAI-compatible client pointed at AWS Bedrock.
+
+    Reads OPENAI_API_KEY and OPENAI_BASE_URL from the environment — the same
+    variables used by aws.py so the configuration is consistent across the
+    project.  Fails closed if OPENAI_API_KEY is missing or empty.
     """
-    api_key = os.getenv("GROQ_API_KEY", "").strip()
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError(
-            "GROQ_API_KEY is not set. Cannot make Groq API calls."
+            "OPENAI_API_KEY is not set. "
+            "Set OPENAI_API_KEY to your AWS Bedrock bearer token before making LLM calls."
         )
-    return Groq(api_key=api_key, timeout=30.0)
-
+    base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
+    return OpenAI(
+        api_key=api_key,
+        base_url=base_url,
+        timeout=30.0,
+    )
 
 def classify_payment_failure(
     raw_or_masked_payload: Dict[str, Any],
@@ -104,12 +120,13 @@ def classify_payment_failure(
     secret_key: Optional[str] = None,
 ) -> RecoveryDecision:
     """
-    Sends the BlindLog-sanitized payload to the Groq model, using JSON schema
-    response_format to enforce structured output — no tool calling, no regex parsing.
+    Sends the BlindLog-sanitized payload to the AWS Bedrock model, using JSON
+    schema response_format to enforce structured output — no tool calling, no
+    regex parsing.
 
     Parameters:
         raw_or_masked_payload: Webhook payload dictionary.
-        client: Optional Groq client instance (for testing/mocking).
+        client: Optional OpenAI-compatible client instance (for testing/mocking).
         model: Optional model identifier override.
         secret_key: Optional BlindLog secret key override for payload sanitization.
 
@@ -120,26 +137,40 @@ def classify_payment_failure(
     sanitized_payload = mask_payload(raw_or_masked_payload, secret_key=secret_key)
 
     # 2. Resolve client and model
-    groq_client = client or get_groq_client()
-    target_model = model or os.getenv("GROQ_MODEL_ID") or DEFAULT_GROQ_MODEL
+    bedrock_client = client or get_bedrock_client()
+    target_model = model or os.getenv("BEDROCK_MODEL") or DEFAULT_BEDROCK_MODEL
 
-    # 3. System prompt with decision guidelines
+    # 3. System prompt with explicit, unambiguous decision rules
     system_prompt = (
-        "You are an expert payment failure triage and recovery routing brain. "
-        "Analyze the provided sanitized payment failure webhook event and determine the optimal recovery action. "
-        "Return a JSON object with 'intent' and 'confidence', plus an optional 'discount' percentage only for offer_emi.\n"
-        "Decision Guidelines:\n"
-        "- 'retry_now': Transient network/gateway timeouts, temporary processing glitches, "
-        "or high past success rate (>0.75).\n"
-        "- 'offer_emi': Insufficient funds on high-value transactions with moderate-to-good customer history.\n"
-        "- 'escalate_to_human': Suspected fraud, invalid CVV repeated failures, "
-        "or very low customer success rate."
+        "You are a payment failure recovery routing engine. "
+        "Your job is to maximise revenue recovery. "
+        "Default to recovery actions (retry_now or offer_emi) unless a hard escalation condition is met.\n\n"
+        "HARD ESCALATION — always choose escalate_to_human:\n"
+        "  - error_code is 'fraud_suspected'\n"
+        "  - error_code is 'invalid_cvv'\n"
+        "  - past_success_rate < 0.20 AND amount > 10000\n\n"
+        "RECOVERY ROUTING — for all other cases use these rules in order:\n"
+        "  1. error_code is 'gateway_timeout' OR error_code is 'card_declined' → retry_now\n"
+        "     (transient errors; the card itself is fine, retry immediately)\n"
+        "  2. error_code is 'insufficient_funds' AND amount > 8000 → offer_emi\n"
+        "     (customer wants to pay but lacks funds; split the payment)\n"
+        "  3. error_code is 'insufficient_funds' AND amount <= 8000 → retry_now\n"
+        "     (small amount; a retry after a short delay usually succeeds)\n"
+        "  4. past_success_rate >= 0.75 → retry_now\n"
+        "     (reliable customer; transient failure, retry)\n"
+        "  5. past_success_rate >= 0.35 → offer_emi\n"
+        "     (moderate history; give the customer a payment option)\n"
+        "  6. past_success_rate < 0.35 → escalate_to_human\n"
+        "     (persistent failures with poor history; needs human review)\n\n"
+        "Return ONLY a JSON object: {\"intent\": \"...\", \"confidence\": 0.0-1.0, \"discount\": null_or_number}.\n"
+        "Set discount (0-100) only when intent is offer_emi. Set to null otherwise.\n"
+        "Never escalate unless one of the HARD ESCALATION conditions is met."
     )
 
     user_content = json.dumps(sanitized_payload, indent=2)
 
-    # 4. Call Groq API with JSON schema response_format — guaranteed structured output
-    response = groq_client.chat.completions.create(
+    # 4. Call Bedrock — no client-side rate limiting needed (default: 10,000 RPM)
+    response = bedrock_client.chat.completions.create(
         model=target_model,
         messages=[
             {"role": "system", "content": system_prompt},
@@ -159,13 +190,13 @@ def classify_payment_failure(
     raw_content = response.choices[0].message.content
 
     if not raw_content:
-        raise RuntimeError("Groq returned an empty response content.")
+        raise RuntimeError("Bedrock returned an empty response content.")
 
     try:
         arguments = json.loads(raw_content)
     except json.JSONDecodeError as exc:
         raise RuntimeError(
-            f"Failed to parse Groq response as JSON: {raw_content}"
+            f"Failed to parse Bedrock response as JSON: {raw_content}"
         ) from exc
 
     return RecoveryDecision(**arguments)
