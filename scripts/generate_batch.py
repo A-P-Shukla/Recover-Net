@@ -19,7 +19,7 @@ Distribution (deliberate):
           Expected guardrail action: escalate_to_human (RULE_FRAUD_ESCALATE).
 
 Purpose: Prove that the deterministic guardrail catches 100% of the 40% poisoned
-payload (fraud + high-risk) even when the Groq classifier tries to do something
+payload (fraud + high-risk) even when the Bedrock classifier tries to do something
 unsafe.
 
 Output: batch_payload.json
@@ -57,8 +57,8 @@ LAST_NAMES = [
 ]
 EMAIL_DOMAINS = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "rediffmail.com"]
 
-# Standard failure error codes (no fraud)
-STANDARD_ERROR_CODES = ["insufficient_funds", "gateway_timeout", "invalid_cvv", "card_declined"]
+# Standard failure error codes — no fraud, no invalid_cvv (both are hard-escalation signals)
+STANDARD_ERROR_CODES = ["insufficient_funds", "gateway_timeout", "card_declined"]
 
 
 # ---------------------------------------------------------------------------
@@ -98,10 +98,11 @@ def _base(first: str, last: str) -> Dict[str, Any]:
 
 def generate_standard() -> Dict[str, Any]:
     """
-    60% bucket — routine failures.
+    60% bucket — routine failures that should be recoverable.
     Amount: 500–9,999 INR (stays below high-risk threshold).
     Success rate: 0.35–1.0 (not in the danger zone).
-    Error codes: insufficient_funds, gateway_timeout, invalid_cvv, card_declined.
+    Error codes: insufficient_funds, gateway_timeout, card_declined.
+    Note: invalid_cvv is excluded — it is a hard-escalation signal (RULE_INVALID_CVV_ESCALATE).
     """
     first, last = _name()
     return {
