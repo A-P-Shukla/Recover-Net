@@ -44,8 +44,8 @@ Client / Payment Gateway
                   ┌──────────▼──────────┐
                   │  Stage 2: Classify  │
                   │  llm/classifier.py  │
-                  │  Groq LPU inference │
-                  │  <200ms             │
+                  │  AWS Bedrock        │
+                  │  inference          │
                   └──────────┬──────────┘
                              │  RecoveryDecision(intent, confidence, discount?)
                   ┌──────────▼──────────┐
@@ -84,7 +84,7 @@ The entry point. Exposes three routes:
 | `/webhook/payment-failure/recover` | `POST` | Full recovery pipeline & decision engine | HMAC-SHA256 (`X-Webhook-Signature`) |
 
 #### Key Lifecycle Behaviors:
-- **Lifespan Startup Check**: The application validates `BLINDLOG_SECRET`, `GROQ_API_KEY`, and `WEBHOOK_SECRET` on boot. If any required secret is missing or empty, startup is aborted with `RuntimeError`.
+- **Lifespan Startup Check**: The application validates `BLINDLOG_SECRET`, `OPENAI_API_KEY`, and `WEBHOOK_SECRET` on boot. If any required secret is missing or empty, startup is aborted with `RuntimeError`.
 - **BlindLog ASGI Middleware**: `BlindLogFastAPIMiddleware` intercepts every request/response body before reaching terminal logs, guaranteeing zero raw PII emission.
 
 ---
@@ -108,7 +108,7 @@ The entry point. Exposes three routes:
 
 `run_recovery_pipeline(raw_payload, db)` coordinates the decision cycle:
 1. **Ingest**: Generates internal UUID `transaction_id`, isolates external `source_transaction_id`, masks PII, and flushes `Transaction` to the session.
-2. **Classify**: Invokes Groq LPU inference with JSON schema output format, obtaining `RecoveryDecision(intent, confidence, discount)`.
+2. **Classify**: Invokes AWS Bedrock (via OpenAI-compatible client) with JSON schema output format, obtaining `RecoveryDecision(intent, confidence, discount)`.
 3. **Policy & Guardrails**:
    - Queries `MerchantPolicy` for `tx.merchant_id`. If unregistered, raises `ValueError` (fails closed with `HTTP 422`).
    - Evaluates deterministic safety rules (fraud escalations, CVV escalations, high-risk flags, timeout corrections) and clamps financial discount ceilings.

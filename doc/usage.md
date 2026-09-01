@@ -18,7 +18,7 @@ This guide covers environment configuration, starting Recover-Net services, auth
 Recover-Net requires:
 1. Python 3.12+ and [uv](https://docs.astral.sh/uv/)
 2. PostgreSQL 16 (local instance or Docker container)
-3. Groq API Key ([console.groq.com](https://console.groq.com))
+3. An AWS Bedrock bearer token or API key — see [AWS Bedrock Console](https://console.aws.amazon.com/bedrock/)
 
 ### 1. Environment Configuration
 
@@ -32,17 +32,19 @@ cp .env.example .env
 |---|---|---|---|
 | `DATABASE_URL` | Yes | `postgresql+psycopg2://postgres:postgres@localhost:5432/recover_net` | PostgreSQL connection string |
 | `BLINDLOG_SECRET` | Yes | — | Secret key for deterministic PII pseudonymization |
-| `GROQ_API_KEY` | Yes | — | API key for Groq LPU inference |
-| `GROQ_MODEL_ID` | No | `openai/gpt-oss-20b` | Model ID for classification |
+| `OPENAI_API_KEY` | Yes | — | AWS Bedrock bearer token / API key |
+| `OPENAI_BASE_URL` | Yes | — | Bedrock OpenAI-compatible endpoint (e.g. `https://bedrock-mantle.ap-southeast-2.api.aws/v1`) |
+| `BEDROCK_MODEL` | No | `mistral.ministral-3-8b-instruct` | Bedrock model ID for classification |
 | `WEBHOOK_SECRET` | Yes | — | HMAC-SHA256 secret key for inbound request signing |
 
-> **Fail-Closed Guarantee**: The FastAPI application validates that `BLINDLOG_SECRET`, `GROQ_API_KEY`, and `WEBHOOK_SECRET` are non-empty at startup. If any secret is missing, server startup aborts immediately.
+> **Fail-Closed Guarantee**: The FastAPI application validates that `BLINDLOG_SECRET`, `OPENAI_API_KEY`, and `WEBHOOK_SECRET` are non-empty at startup. If any secret is missing, server startup aborts immediately.
 
 ---
 
 ## Starting the Application
 
 ### Option A: Local Development
+
 ```bash
 # 1. Start PostgreSQL via Docker Compose
 docker compose up -d postgres
@@ -55,13 +57,21 @@ uv run uvicorn recover_net.core.app:app --reload --port 8000
 ```
 
 ### Option B: Full Docker Stack
+
 ```bash
 docker compose up --build
 ```
 
 Verify service liveness:
+
 ```bash
 curl http://localhost:8000/health
+```
+
+Expected response:
+
+```json
+{ "status": "ok", "service": "recover-net" }
 ```
 
 ---
@@ -70,7 +80,8 @@ curl http://localhost:8000/health
 
 All webhook endpoints require an HMAC-SHA256 signature passed in the `X-Webhook-Signature` header.
 
-### Signature Computation (Python Example)
+### Signature Computation (Python)
+
 ```python
 import hashlib
 import hmac
@@ -85,7 +96,7 @@ payload = {
     "merchant_id": "default",
     "amount": 4500.00,
     "error_code": "gateway_timeout",
-    "past_success_rate": 0.85
+    "past_success_rate": 0.85,
 }
 
 raw_bytes = json.dumps(payload).encode("utf-8")
@@ -109,9 +120,11 @@ print(response.status_code, response.json())
 ## Webhook Endpoints
 
 ### 1. Ingest Only (`POST /webhook/payment-failure`)
-Stores the transaction with pseudonymized PII without triggering AI classification.
+
+Stores the transaction with pseudonymized PII. Does not trigger LLM classification or guardrail evaluation.
 
 **Response `201 Created`**:
+
 ```json
 {
   "status": "success",
@@ -124,9 +137,11 @@ Stores the transaction with pseudonymized PII without triggering AI classificati
 ```
 
 ### 2. Full Recovery Pipeline (`POST /webhook/payment-failure/recover`)
-Executes the full pipeline: PII masking → Groq classification → Dynamic guardrail → Audit ledger commit.
+
+Executes the complete pipeline: PII masking → Bedrock classification → Dynamic guardrail → Audit ledger commit.
 
 **Response `201 Created`**:
+
 ```json
 {
   "status": "success",
@@ -152,18 +167,34 @@ Executes the full pipeline: PII masking → Groq classification → Dynamic guar
 
 ## Batch Concurrency Engine
 
-Use `scripts/batch_runner.py` to blast concurrent transactions, test throughput, and evaluate guardrail intercepts:
+Use `scripts/batch_runner.py` to blast concurrent transactions, test throughput, and evaluate guardrail intercepts. AWS Bedrock's on-demand quota is ~10,000 RPM — no client-side rate limiting is applied.
 
 ```bash
-# 1. Generate a synthetic test dataset (50-100 items)
+# 1. Generate a synthetic test dataset (75 records: 60% standard, 20% high-risk, 20% fraud)
 uv run python scripts/generate_batch.py
 
-# 2. Run the concurrent batch runner (automatically signs with $WEBHOOK_SECRET)
-uv run python scripts/batch_runner.py --concurrency 5
+# 2. Run the concurrent batch runner (signs requests with $WEBHOOK_SECRET automatically)
+uv run python scripts/batch_runner.py --concurrency 20
 
 # 3. Custom options
-uv run python scripts/batch_runner.py --url http://localhost:8000 --concurrency 10 --secret your-secret --report-json batch_results.json
+uv run python scripts/batch_runner.py \
+  --url http://localhost:8000 \
+  --concurrency 20 \
+  --secret your-webhook-secret \
+  --report-json batch_results.json
 ```
+
+**Expected throughput**: 75 transactions at `--concurrency 20` complete in roughly 12–20 seconds.
+
+**CLI flags**:
+
+| Flag | Default | Description |
+|---|---|---|
+| `--url` | `http://localhost:8000` | Base URL of the FastAPI server |
+| `--batch` | `batch_payload.json` | Path to the batch JSON file |
+| `--concurrency` | `20` | Maximum simultaneous in-flight requests |
+| `--secret` | `$WEBHOOK_SECRET` | HMAC-SHA256 signing secret |
+| `--report-json` | — | Optional path to write full results as JSON |
 
 ---
 
@@ -176,12 +207,17 @@ uv run pytest
 ```
 
 Execute specific test modules:
+
 ```bash
-uv run pytest tests/test_classifier.py
-uv run pytest tests/test_guardrail.py
-uv run pytest tests/test_webhook.py
-uv run pytest tests/test_workflow.py
+uv run pytest tests/test_classifier.py   # Bedrock classifier + schema validation
+uv run pytest tests/test_guardrail.py    # Deterministic guardrail rules
+uv run pytest tests/test_webhook.py      # HMAC auth + ingest endpoint
+uv run pytest tests/test_workflow.py     # Full pipeline + FastAPI integration
+uv run pytest tests/test_security.py     # BlindLog PII masking
+uv run pytest tests/test_models.py       # SQLAlchemy ORM + PII column validation
 ```
+
+All 88 tests cover: classifier schemas, PII sanitization, model boundaries, guardrail rules, HMAC authentication, and full pipeline integration.
 
 ---
 

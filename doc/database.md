@@ -96,7 +96,7 @@ Provides an immutable, tamper-evident record of all AI classification proposals 
 |---|---|---|---|---|
 | `log_id` | `UUID` | No | `uuid4()` | Primary key for the audit log entry. |
 | `transaction_id` | `UUID` | No | — | Foreign key reference to `transactions.transaction_id`. |
-| `llm_proposed_action` | `TEXT` | Yes | — | JSON-serialized `RecoveryDecision` from Groq classifier (`intent`, `confidence`, `discount`). |
+| `llm_proposed_action` | `TEXT` | Yes | — | JSON-serialized `RecoveryDecision` from Bedrock classifier (`intent`, `confidence`, `discount`). |
 | `guardrail_decision` | `TEXT` | Yes | — | JSON-serialized `GuardrailResult` (`final_intent`, `overridden`, `rule_applied`). |
 | `action` | `VARCHAR(20)` | No | `APPROVED` | Decision outcome: `APPROVED`, `MODIFIED`, or `OVERRIDDEN`. |
 | `modified_parameters` | `JSONB` / `JSON` | Yes | `NULL` | Provenance dictionary recording proposed, applied, and max parameter values when bounded. |
