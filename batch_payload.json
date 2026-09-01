@@ -1,666 +1,126 @@
 [
   {
-    "transaction_id": "0666768b-72df-41d7-a157-01ae9c3d4f42",
-    "user_email": "ishaan_patel@hotmail.com",
-    "phone": "+918030564139",
-    "merchant_id": "default",
-    "amount": 5655,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.78,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "09b07a59-ddbb-4c37-987e-b9b1be41034c",
-    "user_email": "ananya_kapoor@yahoo.com",
-    "phone": "+919073375433",
-    "merchant_id": "default",
-    "amount": 887,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.61,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "ac8dbfc9-e166-42d9-b9f6-554bb8d8c7a1",
-    "user_email": "rajesh.mehta@rediffmail.com",
-    "phone": "+918865185067",
-    "merchant_id": "default",
-    "amount": 2229,
-    "error_code": "card_declined",
-    "past_success_rate": 0.97,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "8c28e5e7-9129-4491-9482-75dba632096a",
-    "user_email": "vikrambansal914@rediffmail.com",
-    "phone": "+919277434873",
-    "merchant_id": "default",
-    "amount": 4999,
-    "error_code": "card_declined",
-    "past_success_rate": 0.4,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "4d1b2ac4-6b1b-463e-8deb-e5a068e152ff",
-    "user_email": "nehakumar@gmail.com",
-    "phone": "+918709521456",
-    "merchant_id": "default",
-    "amount": 21511,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.03,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "e9d174f4-4739-4ee0-a021-2e1ada30546e",
-    "user_email": "priya.bansal@gmail.com",
-    "phone": "+918771093248",
-    "merchant_id": "default",
-    "amount": 10897,
-    "error_code": "card_declined",
-    "past_success_rate": 0.02,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "a5482a39-3437-470f-a0fa-98b4eb0c6d43",
-    "user_email": "vikram_nair162@outlook.com",
-    "phone": "+918980841241",
-    "merchant_id": "default",
-    "amount": 2253,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.53,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "5ae13fb4-64ed-486a-b801-b819ae16026e",
-    "user_email": "rohan_bansal181@yahoo.com",
-    "phone": "+919769453147",
-    "merchant_id": "default",
-    "amount": 4495,
-    "error_code": "card_declined",
-    "past_success_rate": 0.72,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "fe53bd22-166b-4387-a1cc-28383848274e",
-    "user_email": "kabiryadav@rediffmail.com",
-    "phone": "+917435240824",
-    "merchant_id": "default",
-    "amount": 1245,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.71,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "db12af79-bf46-4132-a091-3f18f815b4dc",
-    "user_email": "aditya.nair@hotmail.com",
-    "phone": "+916916998543",
-    "merchant_id": "default",
-    "amount": 5647,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.52,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "cccb5387-b912-412c-b8c6-4b8f95b7be66",
-    "user_email": "suresh.singh@hotmail.com",
-    "phone": "+919484677378",
-    "merchant_id": "default",
-    "amount": 19480,
-    "error_code": "card_declined",
-    "past_success_rate": 0.04,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "a587d16e-e99b-465e-b8c8-812ef244e36f",
-    "user_email": "isha_bansal@yahoo.com",
-    "phone": "+918969653287",
-    "merchant_id": "default",
-    "amount": 1989,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.91,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "2473bfba-f059-4851-bff6-4e8387f93943",
-    "user_email": "meenamalhotra111@hotmail.com",
-    "phone": "+919115921249",
-    "merchant_id": "default",
-    "amount": 41989,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.59,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "dede969b-716d-4941-bd55-4dfc66049001",
-    "user_email": "arjunpatel66@hotmail.com",
-    "phone": "+919978480184",
-    "merchant_id": "default",
-    "amount": 6073,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.54,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "b546d74b-9a42-46e7-b85f-5af8fc00a384",
-    "user_email": "rajesh.nair@outlook.com",
-    "phone": "+917003791769",
-    "merchant_id": "default",
-    "amount": 3685,
-    "error_code": "card_declined",
-    "past_success_rate": 0.67,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "0d80a199-4755-4f4c-8520-ca153465d194",
-    "user_email": "saiiyer@rediffmail.com",
-    "phone": "+917465787133",
-    "merchant_id": "default",
-    "amount": 1549,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.36,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "8eb017e3-eab7-4000-bd19-a2834899335a",
-    "user_email": "zaraverma331@hotmail.com",
-    "phone": "+916139904902",
-    "merchant_id": "default",
-    "amount": 40835,
-    "error_code": "card_declined",
-    "past_success_rate": 0.17,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "d4f9856c-e415-4204-8641-616933fa4082",
-    "user_email": "ansh_nair@outlook.com",
-    "phone": "+917236231665",
-    "merchant_id": "default",
-    "amount": 9390,
-    "error_code": "card_declined",
-    "past_success_rate": 0.62,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "ddb5e1fc-e4e5-43c2-ad77-099ab671e59b",
-    "user_email": "amit.kumar@hotmail.com",
-    "phone": "+918777520471",
-    "merchant_id": "default",
-    "amount": 1570,
-    "error_code": "card_declined",
-    "past_success_rate": 0.67,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "339e2088-b809-4c49-a09d-5252a11792ca",
-    "user_email": "zara.mishra283@yahoo.com",
-    "phone": "+918840449972",
-    "merchant_id": "default",
-    "amount": 39265,
-    "error_code": "card_declined",
-    "past_success_rate": 0.07,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "41bb38df-fbf5-48f0-964c-a4bb1d45c3eb",
-    "user_email": "vikram_tiwari465@yahoo.com",
-    "phone": "+919926179640",
-    "merchant_id": "default",
-    "amount": 45738,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.37,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "6dcd2c0e-6484-418c-abdd-38726df2a52c",
-    "user_email": "saanvi.nair@rediffmail.com",
-    "phone": "+916310518347",
-    "merchant_id": "default",
-    "amount": 4010,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.82,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "93961b12-c1b6-4366-98e7-fe0be1be58a9",
-    "user_email": "reyanshkapoor@hotmail.com",
-    "phone": "+919705466889",
-    "merchant_id": "default",
-    "amount": 4113,
-    "error_code": "card_declined",
-    "past_success_rate": 0.49,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "84be41fb-ed30-44fa-b8be-8c1a1233dbd4",
-    "user_email": "suresh_bansal@hotmail.com",
-    "phone": "+918654527111",
-    "merchant_id": "default",
-    "amount": 6609,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.43,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "02f0a460-dca1-4dfe-b09e-900e6ffda479",
-    "user_email": "diya_kapoor361@rediffmail.com",
-    "phone": "+918443135182",
-    "merchant_id": "default",
-    "amount": 3638,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.83,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "94f6cd77-d426-46ed-96fe-8ff7808ca48b",
-    "user_email": "geeta.iyer@yahoo.com",
-    "phone": "+918994717464",
-    "merchant_id": "default",
-    "amount": 42799,
-    "error_code": "card_declined",
-    "past_success_rate": 0.08,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "64d01187-d28e-48a5-8cfd-3a70256d7db9",
-    "user_email": "aaravtiwari666@yahoo.com",
-    "phone": "+917794026542",
-    "merchant_id": "default",
-    "amount": 4027,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.42,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "d8d67273-7e14-40a4-bdca-0a60daff76c4",
-    "user_email": "ananyakapoor119@rediffmail.com",
-    "phone": "+917406088356",
-    "merchant_id": "default",
-    "amount": 1646,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.76,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "2ec494f2-d241-433d-a3c0-91cf77994e86",
-    "user_email": "amitmehta406@gmail.com",
-    "phone": "+916909743953",
-    "merchant_id": "default",
-    "amount": 51722,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.12,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "b20d4b03-4f07-4762-9109-c07b92df5084",
-    "user_email": "ananya.singh195@yahoo.com",
-    "phone": "+917624731781",
-    "merchant_id": "default",
-    "amount": 1328,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.98,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "a454fe36-1b30-4a67-abef-ab6e89f7edea",
-    "user_email": "amitjoshi544@hotmail.com",
-    "phone": "+919896118367",
-    "merchant_id": "default",
-    "amount": 15474,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.41,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "9a7b77eb-049a-4d51-992b-afdee9db2520",
-    "user_email": "kabir_gupta657@outlook.com",
-    "phone": "+918014294019",
-    "merchant_id": "default",
-    "amount": 7619,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.82,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "68157460-d96d-4c28-bc07-d892b8563305",
-    "user_email": "myra_patel389@gmail.com",
-    "phone": "+917755646417",
-    "merchant_id": "default",
-    "amount": 817,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 1.0,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "5e47bc7d-7eb0-4457-af94-3024fb4466f3",
-    "user_email": "saanvi_tiwari956@hotmail.com",
-    "phone": "+917396360576",
-    "merchant_id": "default",
-    "amount": 35303,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.09,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "b8def831-51bb-42f3-af07-769338e7f595",
-    "user_email": "nehasingh317@outlook.com",
-    "phone": "+918648236629",
-    "merchant_id": "default",
-    "amount": 9824,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.61,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "1653c1ae-53ee-4954-a3d0-290ed9b3f79f",
-    "user_email": "myra_bansal102@yahoo.com",
-    "phone": "+918064317139",
-    "merchant_id": "default",
-    "amount": 1899,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.05,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "b02ed2ba-e61f-4af2-955a-3402e19d9f1b",
-    "user_email": "vikram_yadav249@rediffmail.com",
-    "phone": "+919311656670",
-    "merchant_id": "default",
-    "amount": 2112,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.61,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "ef3655f7-9ac7-42bf-8b74-fe6ca5ad1d0e",
-    "user_email": "riya_singh460@gmail.com",
-    "phone": "+916783908470",
-    "merchant_id": "default",
-    "amount": 4486,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 1.0,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "c559f973-fa25-42a9-a596-03a5f8b367e3",
-    "user_email": "neha.tiwari453@yahoo.com",
-    "phone": "+918647436713",
-    "merchant_id": "default",
-    "amount": 34994,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.11,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "7975d656-9084-4f4d-9393-6cf1899f5a0c",
-    "user_email": "isha_tiwari91@gmail.com",
-    "phone": "+918516808760",
-    "merchant_id": "default",
-    "amount": 22294,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.12,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "4f0ab225-0fcb-4680-97b1-201c46532b94",
-    "user_email": "sunitachopra62@yahoo.com",
-    "phone": "+916656049451",
-    "merchant_id": "default",
-    "amount": 38374,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.51,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "025faa94-5b89-48ca-91e4-fc908eb8a699",
-    "user_email": "pooja.verma@outlook.com",
-    "phone": "+916586923226",
-    "merchant_id": "default",
-    "amount": 906,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.83,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "d2d9e386-edab-47f4-9910-9414628ce6da",
-    "user_email": "isha.tiwari810@outlook.com",
-    "phone": "+916481754965",
-    "merchant_id": "default",
-    "amount": 7600,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.67,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "0e189798-8d34-46d4-9dc2-03c3408d62c4",
-    "user_email": "arjun_mehta@hotmail.com",
-    "phone": "+916799118384",
-    "merchant_id": "default",
-    "amount": 2670,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.92,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "54cbfa15-a607-4d3d-b8c9-3917333c8b0d",
-    "user_email": "priya_sharma900@gmail.com",
-    "phone": "+917039117182",
-    "merchant_id": "default",
-    "amount": 2603,
-    "error_code": "card_declined",
-    "past_success_rate": 0.97,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "93943251-dacf-4c3d-8b7b-fe32481d5ce2",
-    "user_email": "saiyadav834@hotmail.com",
-    "phone": "+916756551256",
-    "merchant_id": "default",
-    "amount": 55461,
-    "error_code": "card_declined",
-    "past_success_rate": 0.05,
-    "_batch_label": "high_risk"
-  },
-  {
-    "transaction_id": "d05307ad-8850-4e0d-a080-36fc4aefea8c",
-    "user_email": "arjun.agarwal359@yahoo.com",
-    "phone": "+916493689980",
-    "merchant_id": "default",
-    "amount": 40411,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.93,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "6918379f-1064-4756-989b-429145bca40e",
-    "user_email": "geeta_nair498@yahoo.com",
-    "phone": "+917602606474",
-    "merchant_id": "default",
-    "amount": 7430,
-    "error_code": "card_declined",
-    "past_success_rate": 0.45,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "9edfaf49-2d14-475b-97fe-0701f9f447d0",
-    "user_email": "rohansingh@gmail.com",
-    "phone": "+917218196001",
-    "merchant_id": "default",
-    "amount": 4082,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.68,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "501dc7e5-2d6e-4e9e-9d7a-87e6894e0511",
-    "user_email": "vivaan.nair@outlook.com",
-    "phone": "+916647525534",
-    "merchant_id": "default",
-    "amount": 1669,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.7,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "3f220914-e4e4-4310-8b2c-c0f0754666cd",
-    "user_email": "sunitakapoor@hotmail.com",
-    "phone": "+919770143634",
-    "merchant_id": "default",
-    "amount": 6546,
-    "error_code": "card_declined",
-    "past_success_rate": 0.71,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "03758fcc-e4f9-478e-ae4b-9163edbb1560",
-    "user_email": "suresh_sharma216@outlook.com",
-    "phone": "+918777387214",
-    "merchant_id": "default",
-    "amount": 8945,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.41,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "093dc000-3a91-4767-94ff-5a6e74b3e119",
-    "user_email": "poojapatel@gmail.com",
-    "phone": "+917053950240",
-    "merchant_id": "default",
-    "amount": 8807,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.74,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "0c92ee8e-f3a5-4b66-8c3f-19331a763666",
-    "user_email": "isha_singh619@outlook.com",
-    "phone": "+916781618495",
-    "merchant_id": "default",
-    "amount": 9959,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.81,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "7eb6545b-963c-4a35-929e-0169ff873e67",
-    "user_email": "saanvi.kapoor@rediffmail.com",
-    "phone": "+917805982620",
-    "merchant_id": "default",
-    "amount": 5550,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.93,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "eda31243-db9b-4eba-9ce9-a3661321a1e9",
-    "user_email": "tara.verma831@yahoo.com",
-    "phone": "+916318699938",
-    "merchant_id": "default",
-    "amount": 6732,
-    "error_code": "card_declined",
-    "past_success_rate": 0.94,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "0c7507a1-09b3-4787-8884-615e710f0013",
-    "user_email": "diyanair@gmail.com",
-    "phone": "+917309232719",
-    "merchant_id": "default",
-    "amount": 4071,
-    "error_code": "card_declined",
-    "past_success_rate": 0.8,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "a9d3ee3c-38ba-4c2c-b839-35f2ad3f7d16",
-    "user_email": "kavya_agarwal345@gmail.com",
-    "phone": "+917729806990",
-    "merchant_id": "default",
-    "amount": 1875,
-    "error_code": "card_declined",
-    "past_success_rate": 0.44,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "34431b6c-0d06-421e-84cc-f5786ea9255a",
-    "user_email": "neha.malhotra507@outlook.com",
-    "phone": "+917735454948",
-    "merchant_id": "default",
-    "amount": 666,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.41,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "bf79c52e-3192-4db5-8de3-966b32c995df",
-    "user_email": "saanvichopra936@rediffmail.com",
-    "phone": "+917474517123",
-    "merchant_id": "default",
-    "amount": 44823,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.72,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "f24784e5-f79d-4e3a-b69c-940f445c11fa",
-    "user_email": "ansh_yadav@hotmail.com",
-    "phone": "+916334123281",
-    "merchant_id": "default",
-    "amount": 3064,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.62,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "e8a8dcfd-8d16-435e-8c72-9c5a544697cb",
-    "user_email": "zara.reddy704@outlook.com",
-    "phone": "+919401640052",
-    "merchant_id": "default",
-    "amount": 4791,
-    "error_code": "gateway_timeout",
-    "past_success_rate": 0.83,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "bd5818ac-f208-494f-a3bb-ae03fea10686",
-    "user_email": "saibansal897@gmail.com",
-    "phone": "+917814893252",
-    "merchant_id": "default",
-    "amount": 9337,
-    "error_code": "insufficient_funds",
-    "past_success_rate": 0.74,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "5bf6e05c-0c3f-4074-9f37-61d70cc8c71b",
+    "transaction_id": "16a8007c-163c-4cf8-8996-86edf25efaa7",
     "user_email": "amit.singh711@hotmail.com",
     "phone": "+916050455623",
     "merchant_id": "default",
     "amount": 44811,
-    "error_code": "card_declined",
+    "error_code": "gateway_timeout",
     "past_success_rate": 0.11,
     "_batch_label": "high_risk"
   },
   {
-    "transaction_id": "52a1b87c-37d3-4bb4-86f4-6946b5fd19aa",
-    "user_email": "amit_pandey@hotmail.com",
-    "phone": "+918471349361",
+    "transaction_id": "fb30aec5-87e0-44d1-a505-117ca2f1237c",
+    "user_email": "myra.gupta279@outlook.com",
+    "phone": "+918812236231",
     "merchant_id": "default",
-    "amount": 9422,
+    "amount": 7297,
     "error_code": "gateway_timeout",
-    "past_success_rate": 0.77,
+    "past_success_rate": 0.57,
     "_batch_label": "standard"
   },
   {
-    "transaction_id": "222c17bd-2ff6-4be1-9555-7c600079bb7d",
-    "user_email": "anshreddy@gmail.com",
-    "phone": "+918009788208",
+    "transaction_id": "3ffa3f66-2b68-4872-a151-d9ce40b9e972",
+    "user_email": "riya_mehta413@hotmail.com",
+    "phone": "+917366299468",
     "merchant_id": "default",
-    "amount": 1812,
+    "amount": 506,
     "error_code": "gateway_timeout",
-    "past_success_rate": 0.39,
+    "past_success_rate": 0.54,
     "_batch_label": "standard"
   },
   {
-    "transaction_id": "97933296-8b9d-454f-9e8f-e9ad941adfca",
+    "transaction_id": "341f653e-ef4c-4092-8650-a15ec93d8f66",
+    "user_email": "saanvi_pandey225@yahoo.com",
+    "phone": "+919706562729",
+    "merchant_id": "default",
+    "amount": 9251,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.94,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "9906bec0-f08c-4b5d-bb0e-0c2cd1d63d2d",
+    "user_email": "aarav.kapoor444@hotmail.com",
+    "phone": "+919262849877",
+    "merchant_id": "default",
+    "amount": 7636,
+    "error_code": "card_declined",
+    "past_success_rate": 0.74,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "f162cdf2-e5ef-4154-aa45-479824354498",
+    "user_email": "zara.iyer@gmail.com",
+    "phone": "+918902787429",
+    "merchant_id": "default",
+    "amount": 38567,
+    "error_code": "card_declined",
+    "past_success_rate": 0.15,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "bc2bf0e3-6bd3-4165-a532-d86f349e877f",
+    "user_email": "reyansh.malhotra@gmail.com",
+    "phone": "+919474687234",
+    "merchant_id": "default",
+    "amount": 4066,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.73,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "53e61f55-b558-4f6f-86e4-1cf965cef346",
+    "user_email": "isha_singh619@outlook.com",
+    "phone": "+916781618495",
+    "merchant_id": "default",
+    "amount": 9959,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.81,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "83c9b659-adcf-4781-8665-e5e2030ce9b5",
+    "user_email": "anshmehta406@gmail.com",
+    "phone": "+916909743953",
+    "merchant_id": "default",
+    "amount": 42221,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.19,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "2ebb381d-996a-4f0e-b389-040444de5a7f",
+    "user_email": "saanvi_nair389@yahoo.com",
+    "phone": "+917503056413",
+    "merchant_id": "default",
+    "amount": 9792,
+    "error_code": "card_declined",
+    "past_success_rate": 0.55,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "1e54bcf0-6969-4240-9af9-41c18842d869",
+    "user_email": "aditya_agarwal342@outlook.com",
+    "phone": "+916256746807",
+    "merchant_id": "default",
+    "amount": 15772,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.05,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "e0ab31b3-e4a6-40d5-8917-51ac03bc7810",
+    "user_email": "priya.kapoor100@yahoo.com",
+    "phone": "+918667010651",
+    "merchant_id": "default",
+    "amount": 4573,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.47,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "a456bcac-d23f-4973-b9eb-cd4dd5fe6d91",
     "user_email": "ananyanair@yahoo.com",
     "phone": "+917933529042",
     "merchant_id": "default",
@@ -670,47 +130,87 @@
     "_batch_label": "fraud"
   },
   {
-    "transaction_id": "8bc29555-1d89-41c8-b069-cfbe9e37e3bf",
-    "user_email": "ishaan.kumar798@gmail.com",
-    "phone": "+917287083172",
+    "transaction_id": "1b745162-0b2f-4b84-a389-8dbf9071bae9",
+    "user_email": "kabir.gupta@yahoo.com",
+    "phone": "+917067974034",
     "merchant_id": "default",
-    "amount": 8112,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.97,
-    "_batch_label": "standard"
-  },
-  {
-    "transaction_id": "2ea050ca-c217-41c9-9d91-fd6a9ba66528",
-    "user_email": "reyansh_malhotra@hotmail.com",
-    "phone": "+918459910229",
-    "merchant_id": "default",
-    "amount": 3761,
-    "error_code": "fraud_suspected",
-    "past_success_rate": 0.67,
-    "_batch_label": "fraud"
-  },
-  {
-    "transaction_id": "7748fe6f-68ef-430d-9ca7-e1eeb89c06c9",
-    "user_email": "vivaankumar@rediffmail.com",
-    "phone": "+919187026217",
-    "merchant_id": "default",
-    "amount": 61219,
-    "error_code": "invalid_cvv",
-    "past_success_rate": 0.06,
+    "amount": 56332,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.13,
     "_batch_label": "high_risk"
   },
   {
-    "transaction_id": "7c2d23dd-7f7e-42a2-9651-74287d90a454",
-    "user_email": "suresh.iyer280@gmail.com",
-    "phone": "+918502296120",
+    "transaction_id": "beec6534-d2a1-4a7a-a8cd-c4b42e05cec5",
+    "user_email": "arjunagarwal723@outlook.com",
+    "phone": "+919773782639",
     "merchant_id": "default",
-    "amount": 6513,
+    "amount": 43309,
+    "error_code": "card_declined",
+    "past_success_rate": 0.17,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "73d6210a-61b0-41ff-9104-081d549e6423",
+    "user_email": "meenasharma907@gmail.com",
+    "phone": "+918146270482",
+    "merchant_id": "default",
+    "amount": 8817,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.92,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "7b60496f-92ba-49d8-a126-44f51af41789",
+    "user_email": "neha.tiwari453@yahoo.com",
+    "phone": "+918647436713",
+    "merchant_id": "default",
+    "amount": 34994,
+    "error_code": "card_declined",
+    "past_success_rate": 0.07,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "e04e86f1-0308-40f3-8ae4-29477a2e5d5d",
+    "user_email": "meena.agarwal837@yahoo.com",
+    "phone": "+918433036541",
+    "merchant_id": "default",
+    "amount": 5073,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.77,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "9f2823a4-7804-4ea0-be2f-12fd0d0253c7",
+    "user_email": "amitjoshi544@hotmail.com",
+    "phone": "+919896118367",
+    "merchant_id": "default",
+    "amount": 15474,
     "error_code": "fraud_suspected",
-    "past_success_rate": 0.75,
+    "past_success_rate": 0.41,
     "_batch_label": "fraud"
   },
   {
-    "transaction_id": "c6d24953-5094-46fa-bfea-c370a4ee64c3",
+    "transaction_id": "c2024a70-a310-42db-8196-6f2d45140636",
+    "user_email": "saanvi.verma52@outlook.com",
+    "phone": "+917081219136",
+    "merchant_id": "default",
+    "amount": 2464,
+    "error_code": "card_declined",
+    "past_success_rate": 0.51,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "f98d7ad0-4a10-465c-a8e6-7d22ef186e2b",
+    "user_email": "vikram_tiwari465@yahoo.com",
+    "phone": "+919926179640",
+    "merchant_id": "default",
+    "amount": 45738,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.37,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "05c4b820-df52-4653-a911-95621561422f",
     "user_email": "priyasharma@rediffmail.com",
     "phone": "+916746120047",
     "merchant_id": "default",
@@ -720,7 +220,17 @@
     "_batch_label": "fraud"
   },
   {
-    "transaction_id": "8a0db7d4-3ee6-4201-8653-aebef544cac1",
+    "transaction_id": "8eee54b9-1564-4f16-923e-075eb7fde632",
+    "user_email": "ansh.iyer@yahoo.com",
+    "phone": "+918182337498",
+    "merchant_id": "default",
+    "amount": 5136,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.89,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "b65d28e7-ab01-488c-85a8-47dd92b1c3e4",
     "user_email": "amit_malhotra873@gmail.com",
     "phone": "+918780913431",
     "merchant_id": "default",
@@ -730,23 +240,513 @@
     "_batch_label": "high_risk"
   },
   {
-    "transaction_id": "ddef1e5a-c61a-443b-92fc-4cbcf842263b",
+    "transaction_id": "e22d5f8f-3f70-4a66-b798-f9235047cb8a",
+    "user_email": "rohan.kumar130@hotmail.com",
+    "phone": "+916718702621",
+    "merchant_id": "default",
+    "amount": 40769,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.06,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "abf64f2e-711f-4035-a5db-1b665a780701",
+    "user_email": "aarav.gupta@gmail.com",
+    "phone": "+918183473829",
+    "merchant_id": "default",
+    "amount": 9940,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.51,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "c305cbc7-49e0-4aba-800f-73b89e2a0cc4",
+    "user_email": "poojapatel@gmail.com",
+    "phone": "+917053950240",
+    "merchant_id": "default",
+    "amount": 8807,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.74,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "5e876d51-a378-49d1-9879-291d21dd4f38",
+    "user_email": "zara.verma430@rediffmail.com",
+    "phone": "+918353462475",
+    "merchant_id": "default",
+    "amount": 1688,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.65,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "2f786c49-0654-407b-99f4-459cfdb43527",
+    "user_email": "saanvi_malhotra@hotmail.com",
+    "phone": "+917963605766",
+    "merchant_id": "default",
+    "amount": 74777,
+    "error_code": "card_declined",
+    "past_success_rate": 0.15,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "99294d9b-bc77-46cf-904d-d1351ce23f9a",
+    "user_email": "arjun.mishra@hotmail.com",
+    "phone": "+916226916697",
+    "merchant_id": "default",
+    "amount": 9169,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.98,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "c19dd407-e594-4f4e-bbe8-603368a34192",
+    "user_email": "isha.tiwari810@outlook.com",
+    "phone": "+916481754965",
+    "merchant_id": "default",
+    "amount": 7600,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.67,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "f35bf622-b961-4080-a4da-71d68bc85c7e",
+    "user_email": "meena_gupta349@outlook.com",
+    "phone": "+916449972787",
+    "merchant_id": "default",
+    "amount": 32619,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.1,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "16a9516d-8be9-4161-b52f-136fda566c11",
+    "user_email": "neha.singh477@rediffmail.com",
+    "phone": "+918299124190",
+    "merchant_id": "default",
+    "amount": 5611,
+    "error_code": "card_declined",
+    "past_success_rate": 0.79,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "0c2132ff-69b0-4e28-8ef5-7bc279148382",
+    "user_email": "myra.kapoor853@gmail.com",
+    "phone": "+919909670546",
+    "merchant_id": "default",
+    "amount": 7365,
+    "error_code": "card_declined",
+    "past_success_rate": 0.84,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "43d0387f-9029-457c-b572-15dd5b65ff0a",
+    "user_email": "rajesh.nair@outlook.com",
+    "phone": "+917003791769",
+    "merchant_id": "default",
+    "amount": 3685,
+    "error_code": "card_declined",
+    "past_success_rate": 0.8,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "00f1ee34-6d0e-434d-ae08-b50b7c6cb4cb",
+    "user_email": "priya.malhotra@yahoo.com",
+    "phone": "+916632870831",
+    "merchant_id": "default",
+    "amount": 7978,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.87,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "fe7b425c-b62d-4255-b427-b038171d35e9",
+    "user_email": "tarasingh219@gmail.com",
+    "phone": "+917513542784",
+    "merchant_id": "default",
+    "amount": 9166,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.78,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "5d3cbd03-7820-4560-81e7-d6225c1242ff",
+    "user_email": "riya_singh460@gmail.com",
+    "phone": "+916783908470",
+    "merchant_id": "default",
+    "amount": 4486,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 1.0,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "ac0ceb47-7a27-473e-9110-e5da67bc90eb",
+    "user_email": "ansh.nair@outlook.com",
+    "phone": "+917400842710",
+    "merchant_id": "default",
+    "amount": 9905,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.66,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "6b351bc4-e130-4139-8689-5e7e2bbfb7d9",
+    "user_email": "meenamalhotra111@hotmail.com",
+    "phone": "+919115921249",
+    "merchant_id": "default",
+    "amount": 41989,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.59,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "a6a04478-dbb8-41ac-b54c-10184b87caae",
+    "user_email": "vihaan.malhotra674@rediffmail.com",
+    "phone": "+919038597703",
+    "merchant_id": "default",
+    "amount": 27502,
+    "error_code": "card_declined",
+    "past_success_rate": 0.02,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "0eac925c-1f71-45ac-9278-a93cd3ab4068",
+    "user_email": "poojatiwari514@outlook.com",
+    "phone": "+917474517123",
+    "merchant_id": "default",
+    "amount": 44823,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.72,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "4cfa4bad-4f23-46bd-92a4-4f3558550594",
+    "user_email": "sunitachopra62@yahoo.com",
+    "phone": "+916656049451",
+    "merchant_id": "default",
+    "amount": 38374,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.51,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "135dca27-d70e-48cf-a79c-199b6dbe9f0d",
     "user_email": "pooja.patel81@yahoo.com",
     "phone": "+917792374740",
     "merchant_id": "default",
     "amount": 68911,
-    "error_code": "card_declined",
+    "error_code": "gateway_timeout",
     "past_success_rate": 0.17,
     "_batch_label": "high_risk"
   },
   {
-    "transaction_id": "cb52e5c0-f4e2-4485-beb0-e3d558e1b3af",
-    "user_email": "rajeshchopra@yahoo.com",
-    "phone": "+917419049663",
+    "transaction_id": "dbf4fb0d-1486-46fc-8a37-51414438ad33",
+    "user_email": "ananya_nair903@gmail.com",
+    "phone": "+917799650752",
     "merchant_id": "default",
-    "amount": 1745,
+    "amount": 8488,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.58,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "44a8cd58-8156-4f2a-83a8-942131ed2f8f",
+    "user_email": "isha.malhotra@yahoo.com",
+    "phone": "+916491905865",
+    "merchant_id": "default",
+    "amount": 1629,
+    "error_code": "card_declined",
+    "past_success_rate": 0.77,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "73d90bf9-49c1-4fe1-a265-2466f36d4ee5",
+    "user_email": "vikram.kumar855@rediffmail.com",
+    "phone": "+917620450533",
+    "merchant_id": "default",
+    "amount": 2184,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.86,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "8b28b18a-8476-46e8-91ac-c728ec8df677",
+    "user_email": "myra_gupta@yahoo.com",
+    "phone": "+919183242102",
+    "merchant_id": "default",
+    "amount": 61946,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.11,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "c7bf95ce-0b2a-4aa7-be09-2daa67310471",
+    "user_email": "geetaverma434@gmail.com",
+    "phone": "+916052427868",
+    "merchant_id": "default",
+    "amount": 658,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.4,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "92adf37e-ba2d-4f1c-9b05-e9843cf7abb7",
+    "user_email": "myra_bansal102@yahoo.com",
+    "phone": "+918064317139",
+    "merchant_id": "default",
+    "amount": 1899,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.05,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "7512eebf-4c5f-44dc-8303-c8e7bc6d2d71",
+    "user_email": "rajesh_reddy688@outlook.com",
+    "phone": "+919871331509",
+    "merchant_id": "default",
+    "amount": 9575,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.73,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "a9228559-d08f-417d-a587-daf145e4e97f",
+    "user_email": "vikramkapoor@rediffmail.com",
+    "phone": "+917260256342",
+    "merchant_id": "default",
+    "amount": 2271,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.92,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "5aff636f-8949-4866-b17d-f7be5467b3e5",
+    "user_email": "nehamishra325@rediffmail.com",
+    "phone": "+919872774348",
+    "merchant_id": "default",
+    "amount": 8439,
+    "error_code": "card_declined",
+    "past_success_rate": 0.51,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "0469aa5a-1820-43a9-ba91-3f057c0bd0b8",
+    "user_email": "kavyayadav330@rediffmail.com",
+    "phone": "+919738721489",
+    "merchant_id": "default",
+    "amount": 5991,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.88,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "0a7d555d-4180-48cb-9e4f-931604f19431",
+    "user_email": "tara.reddy726@outlook.com",
+    "phone": "+916883561595",
+    "merchant_id": "default",
+    "amount": 2541,
+    "error_code": "card_declined",
+    "past_success_rate": 0.94,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "939b6645-33b2-4071-884a-637ce85818f8",
+    "user_email": "myra.kumar286@hotmail.com",
+    "phone": "+917178108013",
+    "merchant_id": "default",
+    "amount": 3224,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.67,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "984e0f80-6063-4243-915f-62b980ff22d9",
+    "user_email": "tara.yadav659@gmail.com",
+    "phone": "+917720465375",
+    "merchant_id": "default",
+    "amount": 6029,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.53,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "8ff874ea-4098-4b97-a2d9-5bb22d9674e8",
+    "user_email": "kabirkumar@gmail.com",
+    "phone": "+918709521456",
+    "merchant_id": "default",
+    "amount": 12010,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.2,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "f0a1762b-2318-49de-82ae-9e47c865b98e",
+    "user_email": "rohanagarwal@hotmail.com",
+    "phone": "+918238849696",
+    "merchant_id": "default",
+    "amount": 6430,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 1.0,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "9681ebd2-8009-4ff5-83c9-ba00fdae1005",
+    "user_email": "aaravtiwari666@yahoo.com",
+    "phone": "+917794026542",
+    "merchant_id": "default",
+    "amount": 4027,
     "error_code": "gateway_timeout",
     "past_success_rate": 0.42,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "4846786d-41fb-42e8-9f47-be92163b42d0",
+    "user_email": "aditya_mehta@yahoo.com",
+    "phone": "+918957885685",
+    "merchant_id": "default",
+    "amount": 6264,
+    "error_code": "card_declined",
+    "past_success_rate": 0.64,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "68e99d93-622d-4722-8658-693fc1c83171",
+    "user_email": "suresh_yadav128@outlook.com",
+    "phone": "+918648877190",
+    "merchant_id": "default",
+    "amount": 68290,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.14,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "946fa1d1-03cc-4ab4-80cb-96294aa915ee",
+    "user_email": "vikram.yadav750@gmail.com",
+    "phone": "+916822782489",
+    "merchant_id": "default",
+    "amount": 7432,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.95,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "93dc3b18-cba6-4287-9ae9-fec356d3c4db",
+    "user_email": "ansh.mishra157@rediffmail.com",
+    "phone": "+917880957015",
+    "merchant_id": "default",
+    "amount": 5538,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.39,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "8bca301e-3e73-4ba7-be9e-e4d2769699e6",
+    "user_email": "ansh.bansal@hotmail.com",
+    "phone": "+917480861317",
+    "merchant_id": "default",
+    "amount": 72067,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.12,
+    "_batch_label": "high_risk"
+  },
+  {
+    "transaction_id": "acceece3-83a5-4fd2-bac9-69c52b5f4e14",
+    "user_email": "saanvi.mehta@gmail.com",
+    "phone": "+916824493534",
+    "merchant_id": "default",
+    "amount": 8780,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.51,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "6584ed14-cd4e-4d67-ac50-a1656d2745b2",
+    "user_email": "suresh_bansal@hotmail.com",
+    "phone": "+918654527111",
+    "merchant_id": "default",
+    "amount": 6609,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.43,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "a6729427-9b66-4369-b26d-895bd6c9e6ff",
+    "user_email": "rohansingh@gmail.com",
+    "phone": "+917218196001",
+    "merchant_id": "default",
+    "amount": 4082,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.68,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "e49b1fcb-327f-412a-903e-c5b9ef4ac60d",
+    "user_email": "vihaantiwari@hotmail.com",
+    "phone": "+919774964990",
+    "merchant_id": "default",
+    "amount": 2125,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.76,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "2001d850-43ce-44d9-b41e-0af792fdc8c1",
+    "user_email": "myra.joshi259@yahoo.com",
+    "phone": "+916167190229",
+    "merchant_id": "default",
+    "amount": 5478,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 1.0,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "8e7594af-7c5f-4712-948d-acaf9aa61b34",
+    "user_email": "kabirjoshi719@outlook.com",
+    "phone": "+916831367837",
+    "merchant_id": "default",
+    "amount": 8541,
+    "error_code": "gateway_timeout",
+    "past_success_rate": 0.87,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "c16bfd4d-dbce-49ea-b981-8b8a806134f8",
+    "user_email": "arjun.agarwal359@yahoo.com",
+    "phone": "+916493689980",
+    "merchant_id": "default",
+    "amount": 40411,
+    "error_code": "fraud_suspected",
+    "past_success_rate": 0.93,
+    "_batch_label": "fraud"
+  },
+  {
+    "transaction_id": "57ed5b6f-e30b-437b-b9c3-5515061c7e3f",
+    "user_email": "isha.tiwari119@outlook.com",
+    "phone": "+917940196556",
+    "merchant_id": "default",
+    "amount": 8879,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.6,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "47bb5567-5a7f-4869-a59e-c3278e00cf98",
+    "user_email": "vivaan.nair@outlook.com",
+    "phone": "+916647525534",
+    "merchant_id": "default",
+    "amount": 1669,
+    "error_code": "card_declined",
+    "past_success_rate": 0.76,
+    "_batch_label": "standard"
+  },
+  {
+    "transaction_id": "9f5f5a77-6cd8-4b19-8c51-7911a4c663bc",
+    "user_email": "suresh.kapoor@outlook.com",
+    "phone": "+916531003309",
+    "merchant_id": "default",
+    "amount": 2996,
+    "error_code": "insufficient_funds",
+    "past_success_rate": 0.43,
     "_batch_label": "standard"
   }
 ]
