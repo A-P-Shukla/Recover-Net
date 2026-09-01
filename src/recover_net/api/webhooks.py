@@ -138,7 +138,7 @@ async def recover_webhook(
     x_webhook_signature: str | None = Header(default=None),
 ) -> Dict[str, Any]:
     """
-    Full recovery pipeline: ingest → Groq classify → guardrail → audit log.
+    Full recovery pipeline: ingest → Bedrock classify → guardrail → audit log.
 
     Returns the guardrail-validated recovery action and full decision provenance.
     """

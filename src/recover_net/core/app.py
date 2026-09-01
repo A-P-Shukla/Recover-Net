@@ -29,10 +29,12 @@ async def lifespan(app: FastAPI):
     """Fail closed: reject startup if required secrets are missing."""
     require_blindlog_secret()
 
-    groq_key = os.getenv("GROQ_API_KEY", "").strip()
-    if not groq_key:
+    bedrock_key = (
+        os.getenv("OPENAI_API_KEY", "").strip()
+    )
+    if not bedrock_key:
         raise RuntimeError(
-            "GROQ_API_KEY is not set. Refusing to start without a valid Groq API key."
+            "OPENAI_API_KEY is not set. Refusing to start without a valid AWS Bedrock API key."
         )
 
     webhook_secret = os.getenv("WEBHOOK_SECRET", "").strip()
@@ -41,7 +43,7 @@ async def lifespan(app: FastAPI):
             "WEBHOOK_SECRET is not set. Refusing to start without a valid webhook signing secret."
         )
 
-    logger.info("Startup checks passed: BLINDLOG_SECRET, GROQ_API_KEY, and WEBHOOK_SECRET are set.")
+    logger.info("Startup checks passed: BLINDLOG_SECRET, OPENAI_API_KEY, and WEBHOOK_SECRET are set.")
     yield
 
 
