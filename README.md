@@ -17,7 +17,6 @@ This is the architecture judges should trust first: every decision path is signe
 - [System Architecture](doc/architecture.md) — Pipeline stages, security boundaries, and module dependency graph
 - [Usage Guide](doc/usage.md) — Running the stack, payload reference, HMAC signatures, and batch testing
 - [Database Reference](doc/database.md) — PostgreSQL schema, column dictionaries, indexes, and migrations
-- [Conversation & Audit Log](docs/CONVERSATION_LOG.md) — Chronological log of decisions, features, and fixes
 
 ---
 
@@ -210,12 +209,14 @@ Generate synthetic workloads and run concurrent batch recovery simulations:
 # 1. Generate poisoned workload (60% standard, 20% high-risk, 20% fraud)
 uv run python scripts/generate_batch.py
 
-# 2. Fire concurrent requests (signed with $WEBHOOK_SECRET)
-uv run python scripts/batch_runner.py --concurrency 5
+# 2. Fire all 75 concurrent requests (signed with $WEBHOOK_SECRET automatically)
+uv run python scripts/batch_runner.py --concurrency 20
 
-# 3. Export detailed financial audit results
-uv run python scripts/batch_runner.py --report-json batch_results.json
+# 3. Custom output paths
+uv run python scripts/batch_runner.py --report-csv results.csv --report-json results.json
 ```
+
+Results are always written to `batch_results.csv` (override with `--report-csv`). The live terminal shows a real-time decision ledger and scoreboard as each response arrives.
 
 ---
 
