@@ -1,76 +1,76 @@
 timestamp,outcome,transaction_id,batch_label,http_status,amount,final_intent,final_status,llm_intent,guardrail_overridden,rule_applied,action,audit_log_id,error
-2026-09-01 12:22:22,FAILED,16a8007c-163c-4cf8-8996-86edf25efaa7,high_risk,409,44811.0,,,,,,,,Transaction '16a8007c-163c-4cf8-8996-86edf25efaa7' has already been processed.
-2026-09-01 12:22:22,FAILED,fb30aec5-87e0-44d1-a505-117ca2f1237c,standard,409,7297.0,,,,,,,,Transaction 'fb30aec5-87e0-44d1-a505-117ca2f1237c' has already been processed.
-2026-09-01 12:22:22,FAILED,3ffa3f66-2b68-4872-a151-d9ce40b9e972,standard,409,506.0,,,,,,,,Transaction '3ffa3f66-2b68-4872-a151-d9ce40b9e972' has already been processed.
-2026-09-01 12:22:22,FAILED,341f653e-ef4c-4092-8650-a15ec93d8f66,standard,409,9251.0,,,,,,,,Transaction '341f653e-ef4c-4092-8650-a15ec93d8f66' has already been processed.
-2026-09-01 12:22:22,FAILED,9906bec0-f08c-4b5d-bb0e-0c2cd1d63d2d,standard,409,7636.0,,,,,,,,Transaction '9906bec0-f08c-4b5d-bb0e-0c2cd1d63d2d' has already been processed.
-2026-09-01 12:22:22,FAILED,f162cdf2-e5ef-4154-aa45-479824354498,high_risk,409,38567.0,,,,,,,,Transaction 'f162cdf2-e5ef-4154-aa45-479824354498' has already been processed.
-2026-09-01 12:22:22,FAILED,bc2bf0e3-6bd3-4165-a532-d86f349e877f,standard,409,4066.0,,,,,,,,Transaction 'bc2bf0e3-6bd3-4165-a532-d86f349e877f' has already been processed.
-2026-09-01 12:22:22,FAILED,53e61f55-b558-4f6f-86e4-1cf965cef346,standard,409,9959.0,,,,,,,,Transaction '53e61f55-b558-4f6f-86e4-1cf965cef346' has already been processed.
-2026-09-01 12:22:22,FAILED,83c9b659-adcf-4781-8665-e5e2030ce9b5,fraud,409,42221.0,,,,,,,,Transaction '83c9b659-adcf-4781-8665-e5e2030ce9b5' has already been processed.
-2026-09-01 12:22:22,FAILED,2ebb381d-996a-4f0e-b389-040444de5a7f,standard,409,9792.0,,,,,,,,Transaction '2ebb381d-996a-4f0e-b389-040444de5a7f' has already been processed.
-2026-09-01 12:22:22,FAILED,1e54bcf0-6969-4240-9af9-41c18842d869,high_risk,409,15772.0,,,,,,,,Transaction '1e54bcf0-6969-4240-9af9-41c18842d869' has already been processed.
-2026-09-01 12:22:22,FAILED,e0ab31b3-e4a6-40d5-8917-51ac03bc7810,standard,409,4573.0,,,,,,,,Transaction 'e0ab31b3-e4a6-40d5-8917-51ac03bc7810' has already been processed.
-2026-09-01 12:22:22,FAILED,a456bcac-d23f-4973-b9eb-cd4dd5fe6d91,fraud,409,9019.0,,,,,,,,Transaction 'a456bcac-d23f-4973-b9eb-cd4dd5fe6d91' has already been processed.
-2026-09-01 12:22:22,FAILED,1b745162-0b2f-4b84-a389-8dbf9071bae9,high_risk,409,56332.0,,,,,,,,Transaction '1b745162-0b2f-4b84-a389-8dbf9071bae9' has already been processed.
-2026-09-01 12:22:22,FAILED,beec6534-d2a1-4a7a-a8cd-c4b42e05cec5,high_risk,409,43309.0,,,,,,,,Transaction 'beec6534-d2a1-4a7a-a8cd-c4b42e05cec5' has already been processed.
-2026-09-01 12:22:22,FAILED,73d6210a-61b0-41ff-9104-081d549e6423,standard,409,8817.0,,,,,,,,Transaction '73d6210a-61b0-41ff-9104-081d549e6423' has already been processed.
-2026-09-01 12:22:22,FAILED,7b60496f-92ba-49d8-a126-44f51af41789,high_risk,409,34994.0,,,,,,,,Transaction '7b60496f-92ba-49d8-a126-44f51af41789' has already been processed.
-2026-09-01 12:22:22,FAILED,e04e86f1-0308-40f3-8ae4-29477a2e5d5d,standard,409,5073.0,,,,,,,,Transaction 'e04e86f1-0308-40f3-8ae4-29477a2e5d5d' has already been processed.
-2026-09-01 12:22:22,FAILED,9f2823a4-7804-4ea0-be2f-12fd0d0253c7,fraud,409,15474.0,,,,,,,,Transaction '9f2823a4-7804-4ea0-be2f-12fd0d0253c7' has already been processed.
-2026-09-01 12:22:22,FAILED,c2024a70-a310-42db-8196-6f2d45140636,standard,409,2464.0,,,,,,,,Transaction 'c2024a70-a310-42db-8196-6f2d45140636' has already been processed.
-2026-09-01 12:22:22,FAILED,f98d7ad0-4a10-465c-a8e6-7d22ef186e2b,fraud,409,45738.0,,,,,,,,Transaction 'f98d7ad0-4a10-465c-a8e6-7d22ef186e2b' has already been processed.
-2026-09-01 12:22:22,FAILED,05c4b820-df52-4653-a911-95621561422f,fraud,409,8110.0,,,,,,,,Transaction '05c4b820-df52-4653-a911-95621561422f' has already been processed.
-2026-09-01 12:22:22,FAILED,8eee54b9-1564-4f16-923e-075eb7fde632,standard,409,5136.0,,,,,,,,Transaction '8eee54b9-1564-4f16-923e-075eb7fde632' has already been processed.
-2026-09-01 12:22:22,FAILED,b65d28e7-ab01-488c-85a8-47dd92b1c3e4,high_risk,409,38441.0,,,,,,,,Transaction 'b65d28e7-ab01-488c-85a8-47dd92b1c3e4' has already been processed.
-2026-09-01 12:22:22,FAILED,e22d5f8f-3f70-4a66-b798-f9235047cb8a,high_risk,409,40769.0,,,,,,,,Transaction 'e22d5f8f-3f70-4a66-b798-f9235047cb8a' has already been processed.
-2026-09-01 12:22:22,FAILED,abf64f2e-711f-4035-a5db-1b665a780701,standard,409,9940.0,,,,,,,,Transaction 'abf64f2e-711f-4035-a5db-1b665a780701' has already been processed.
-2026-09-01 12:22:22,FAILED,c305cbc7-49e0-4aba-800f-73b89e2a0cc4,fraud,409,8807.0,,,,,,,,Transaction 'c305cbc7-49e0-4aba-800f-73b89e2a0cc4' has already been processed.
-2026-09-01 12:22:22,FAILED,5e876d51-a378-49d1-9879-291d21dd4f38,standard,409,1688.0,,,,,,,,Transaction '5e876d51-a378-49d1-9879-291d21dd4f38' has already been processed.
-2026-09-01 12:22:22,FAILED,2f786c49-0654-407b-99f4-459cfdb43527,high_risk,409,74777.0,,,,,,,,Transaction '2f786c49-0654-407b-99f4-459cfdb43527' has already been processed.
-2026-09-01 12:22:22,FAILED,99294d9b-bc77-46cf-904d-d1351ce23f9a,standard,409,9169.0,,,,,,,,Transaction '99294d9b-bc77-46cf-904d-d1351ce23f9a' has already been processed.
-2026-09-01 12:22:22,FAILED,c19dd407-e594-4f4e-bbe8-603368a34192,fraud,409,7600.0,,,,,,,,Transaction 'c19dd407-e594-4f4e-bbe8-603368a34192' has already been processed.
-2026-09-01 12:22:22,FAILED,f35bf622-b961-4080-a4da-71d68bc85c7e,high_risk,409,32619.0,,,,,,,,Transaction 'f35bf622-b961-4080-a4da-71d68bc85c7e' has already been processed.
-2026-09-01 12:22:22,FAILED,16a9516d-8be9-4161-b52f-136fda566c11,standard,409,5611.0,,,,,,,,Transaction '16a9516d-8be9-4161-b52f-136fda566c11' has already been processed.
-2026-09-01 12:22:22,FAILED,0c2132ff-69b0-4e28-8ef5-7bc279148382,standard,409,7365.0,,,,,,,,Transaction '0c2132ff-69b0-4e28-8ef5-7bc279148382' has already been processed.
-2026-09-01 12:22:22,FAILED,43d0387f-9029-457c-b572-15dd5b65ff0a,standard,409,3685.0,,,,,,,,Transaction '43d0387f-9029-457c-b572-15dd5b65ff0a' has already been processed.
-2026-09-01 12:22:22,FAILED,00f1ee34-6d0e-434d-ae08-b50b7c6cb4cb,standard,409,7978.0,,,,,,,,Transaction '00f1ee34-6d0e-434d-ae08-b50b7c6cb4cb' has already been processed.
-2026-09-01 12:22:22,FAILED,fe7b425c-b62d-4255-b427-b038171d35e9,standard,409,9166.0,,,,,,,,Transaction 'fe7b425c-b62d-4255-b427-b038171d35e9' has already been processed.
-2026-09-01 12:22:22,FAILED,5d3cbd03-7820-4560-81e7-d6225c1242ff,fraud,409,4486.0,,,,,,,,Transaction '5d3cbd03-7820-4560-81e7-d6225c1242ff' has already been processed.
-2026-09-01 12:22:22,FAILED,ac0ceb47-7a27-473e-9110-e5da67bc90eb,standard,409,9905.0,,,,,,,,Transaction 'ac0ceb47-7a27-473e-9110-e5da67bc90eb' has already been processed.
-2026-09-01 12:22:22,FAILED,6b351bc4-e130-4139-8689-5e7e2bbfb7d9,fraud,409,41989.0,,,,,,,,Transaction '6b351bc4-e130-4139-8689-5e7e2bbfb7d9' has already been processed.
-2026-09-01 12:22:22,FAILED,a6a04478-dbb8-41ac-b54c-10184b87caae,high_risk,409,27502.0,,,,,,,,Transaction 'a6a04478-dbb8-41ac-b54c-10184b87caae' has already been processed.
-2026-09-01 12:22:22,FAILED,0eac925c-1f71-45ac-9278-a93cd3ab4068,fraud,409,44823.0,,,,,,,,Transaction '0eac925c-1f71-45ac-9278-a93cd3ab4068' has already been processed.
-2026-09-01 12:22:22,FAILED,4cfa4bad-4f23-46bd-92a4-4f3558550594,fraud,409,38374.0,,,,,,,,Transaction '4cfa4bad-4f23-46bd-92a4-4f3558550594' has already been processed.
-2026-09-01 12:22:22,FAILED,135dca27-d70e-48cf-a79c-199b6dbe9f0d,high_risk,409,68911.0,,,,,,,,Transaction '135dca27-d70e-48cf-a79c-199b6dbe9f0d' has already been processed.
-2026-09-01 12:22:22,FAILED,dbf4fb0d-1486-46fc-8a37-51414438ad33,standard,409,8488.0,,,,,,,,Transaction 'dbf4fb0d-1486-46fc-8a37-51414438ad33' has already been processed.
-2026-09-01 12:22:22,FAILED,44a8cd58-8156-4f2a-83a8-942131ed2f8f,standard,409,1629.0,,,,,,,,Transaction '44a8cd58-8156-4f2a-83a8-942131ed2f8f' has already been processed.
-2026-09-01 12:22:22,FAILED,73d90bf9-49c1-4fe1-a265-2466f36d4ee5,standard,409,2184.0,,,,,,,,Transaction '73d90bf9-49c1-4fe1-a265-2466f36d4ee5' has already been processed.
-2026-09-01 12:22:22,FAILED,8b28b18a-8476-46e8-91ac-c728ec8df677,high_risk,409,61946.0,,,,,,,,Transaction '8b28b18a-8476-46e8-91ac-c728ec8df677' has already been processed.
-2026-09-01 12:22:22,FAILED,c7bf95ce-0b2a-4aa7-be09-2daa67310471,standard,409,658.0,,,,,,,,Transaction 'c7bf95ce-0b2a-4aa7-be09-2daa67310471' has already been processed.
-2026-09-01 12:22:22,FAILED,92adf37e-ba2d-4f1c-9b05-e9843cf7abb7,fraud,409,1899.0,,,,,,,,Transaction '92adf37e-ba2d-4f1c-9b05-e9843cf7abb7' has already been processed.
-2026-09-01 12:22:22,FAILED,7512eebf-4c5f-44dc-8303-c8e7bc6d2d71,standard,409,9575.0,,,,,,,,Transaction '7512eebf-4c5f-44dc-8303-c8e7bc6d2d71' has already been processed.
-2026-09-01 12:22:22,FAILED,a9228559-d08f-417d-a587-daf145e4e97f,standard,409,2271.0,,,,,,,,Transaction 'a9228559-d08f-417d-a587-daf145e4e97f' has already been processed.
-2026-09-01 12:22:22,FAILED,5aff636f-8949-4866-b17d-f7be5467b3e5,standard,409,8439.0,,,,,,,,Transaction '5aff636f-8949-4866-b17d-f7be5467b3e5' has already been processed.
-2026-09-01 12:22:22,FAILED,0469aa5a-1820-43a9-ba91-3f057c0bd0b8,standard,409,5991.0,,,,,,,,Transaction '0469aa5a-1820-43a9-ba91-3f057c0bd0b8' has already been processed.
-2026-09-01 12:22:22,FAILED,0a7d555d-4180-48cb-9e4f-931604f19431,standard,409,2541.0,,,,,,,,Transaction '0a7d555d-4180-48cb-9e4f-931604f19431' has already been processed.
-2026-09-01 12:22:22,FAILED,939b6645-33b2-4071-884a-637ce85818f8,standard,409,3224.0,,,,,,,,Transaction '939b6645-33b2-4071-884a-637ce85818f8' has already been processed.
-2026-09-01 12:22:22,FAILED,984e0f80-6063-4243-915f-62b980ff22d9,standard,409,6029.0,,,,,,,,Transaction '984e0f80-6063-4243-915f-62b980ff22d9' has already been processed.
-2026-09-01 12:22:22,FAILED,8ff874ea-4098-4b97-a2d9-5bb22d9674e8,fraud,409,12010.0,,,,,,,,Transaction '8ff874ea-4098-4b97-a2d9-5bb22d9674e8' has already been processed.
-2026-09-01 12:22:22,FAILED,f0a1762b-2318-49de-82ae-9e47c865b98e,standard,409,6430.0,,,,,,,,Transaction 'f0a1762b-2318-49de-82ae-9e47c865b98e' has already been processed.
-2026-09-01 12:22:22,FAILED,9681ebd2-8009-4ff5-83c9-ba00fdae1005,standard,409,4027.0,,,,,,,,Transaction '9681ebd2-8009-4ff5-83c9-ba00fdae1005' has already been processed.
-2026-09-01 12:22:22,FAILED,4846786d-41fb-42e8-9f47-be92163b42d0,standard,409,6264.0,,,,,,,,Transaction '4846786d-41fb-42e8-9f47-be92163b42d0' has already been processed.
-2026-09-01 12:22:22,FAILED,68e99d93-622d-4722-8658-693fc1c83171,high_risk,409,68290.0,,,,,,,,Transaction '68e99d93-622d-4722-8658-693fc1c83171' has already been processed.
-2026-09-01 12:22:22,FAILED,946fa1d1-03cc-4ab4-80cb-96294aa915ee,standard,409,7432.0,,,,,,,,Transaction '946fa1d1-03cc-4ab4-80cb-96294aa915ee' has already been processed.
-2026-09-01 12:22:22,FAILED,93dc3b18-cba6-4287-9ae9-fec356d3c4db,standard,409,5538.0,,,,,,,,Transaction '93dc3b18-cba6-4287-9ae9-fec356d3c4db' has already been processed.
-2026-09-01 12:22:22,FAILED,8bca301e-3e73-4ba7-be9e-e4d2769699e6,high_risk,409,72067.0,,,,,,,,Transaction '8bca301e-3e73-4ba7-be9e-e4d2769699e6' has already been processed.
-2026-09-01 12:22:22,FAILED,acceece3-83a5-4fd2-bac9-69c52b5f4e14,standard,409,8780.0,,,,,,,,Transaction 'acceece3-83a5-4fd2-bac9-69c52b5f4e14' has already been processed.
-2026-09-01 12:22:22,FAILED,6584ed14-cd4e-4d67-ac50-a1656d2745b2,fraud,409,6609.0,,,,,,,,Transaction '6584ed14-cd4e-4d67-ac50-a1656d2745b2' has already been processed.
-2026-09-01 12:22:22,FAILED,a6729427-9b66-4369-b26d-895bd6c9e6ff,standard,409,4082.0,,,,,,,,Transaction 'a6729427-9b66-4369-b26d-895bd6c9e6ff' has already been processed.
-2026-09-01 12:22:22,FAILED,e49b1fcb-327f-412a-903e-c5b9ef4ac60d,standard,409,2125.0,,,,,,,,Transaction 'e49b1fcb-327f-412a-903e-c5b9ef4ac60d' has already been processed.
-2026-09-01 12:22:22,FAILED,2001d850-43ce-44d9-b41e-0af792fdc8c1,standard,409,5478.0,,,,,,,,Transaction '2001d850-43ce-44d9-b41e-0af792fdc8c1' has already been processed.
-2026-09-01 12:22:22,FAILED,8e7594af-7c5f-4712-948d-acaf9aa61b34,standard,409,8541.0,,,,,,,,Transaction '8e7594af-7c5f-4712-948d-acaf9aa61b34' has already been processed.
-2026-09-01 12:22:22,FAILED,c16bfd4d-dbce-49ea-b981-8b8a806134f8,fraud,409,40411.0,,,,,,,,Transaction 'c16bfd4d-dbce-49ea-b981-8b8a806134f8' has already been processed.
-2026-09-01 12:22:22,FAILED,57ed5b6f-e30b-437b-b9c3-5515061c7e3f,standard,409,8879.0,,,,,,,,Transaction '57ed5b6f-e30b-437b-b9c3-5515061c7e3f' has already been processed.
-2026-09-01 12:22:22,FAILED,47bb5567-5a7f-4869-a59e-c3278e00cf98,standard,409,1669.0,,,,,,,,Transaction '47bb5567-5a7f-4869-a59e-c3278e00cf98' has already been processed.
-2026-09-01 12:22:22,FAILED,9f5f5a77-6cd8-4b19-8c51-7911a4c663bc,standard,409,2996.0,,,,,,,,Transaction '9f5f5a77-6cd8-4b19-8c51-7911a4c663bc' has already been processed.
+2026-09-03 10:38:44,BLOCKED,1987c824-ece9-4bc3-8c5e-d141124f53f6,high_risk,201,44811.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,b4cb8321-3d5e-48e4-a868-0c966cd23bd5,
+2026-09-03 10:38:44,RECOVERED,2fe4223e-bd68-4b22-96f0-f8e95eed36b9,standard,201,7297.0,retry_now,RETRIED,retry_now,False,,APPROVED,45eee9ab-d81b-464e-b170-9d581d060124,
+2026-09-03 10:38:44,RECOVERED,b2a1ad7f-5509-44a9-98f3-e8b05850478a,standard,201,506.0,retry_now,RETRIED,retry_now,False,,APPROVED,b0d515a1-6853-423e-be21-5f1376dfba03,
+2026-09-03 10:38:44,RECOVERED,6f762269-11e1-4618-a756-8fb31d85a5f1,standard,201,9251.0,retry_now,RETRIED,retry_now,False,,APPROVED,650b1a63-16a6-402c-9850-759d3ff939c1,
+2026-09-03 10:38:44,RECOVERED,e0c68b4c-43c0-496a-b83d-657fd64f8d29,standard,201,7636.0,retry_now,RETRIED,retry_now,False,,APPROVED,3ec5cbaf-755c-4105-89e9-08253196dae2,
+2026-09-03 10:38:44,BLOCKED,473c4731-4a60-42bb-b885-cadf72988609,high_risk,201,38567.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,fde5d9a0-0748-462e-a20b-9bf4c95cc1c7,
+2026-09-03 10:38:44,RECOVERED,8783ed6a-ddf5-4ad9-af01-cd62c919968e,standard,201,4066.0,retry_now,RETRIED,retry_now,False,,APPROVED,4be4795d-141f-4834-9de6-0a483386e0fa,
+2026-09-03 10:38:44,RECOVERED,4a858678-559c-40ed-8df0-005cf77938aa,standard,201,9959.0,retry_now,RETRIED,retry_now,False,,APPROVED,ca5c1277-65fc-4981-96d1-c6facdc4e398,
+2026-09-03 10:38:44,BLOCKED,12fd0366-e06d-4c5d-94b1-48c42eb800f4,fraud,201,42221.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,ad00ae4c-2f8c-47d5-bfa9-d5088cfa7dfa,
+2026-09-03 10:38:44,RECOVERED,52f36366-d4b4-497b-8874-7a2763618fb6,standard,201,9792.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,5977d33a-1023-42b2-bda0-d4c6f0b79ad0,
+2026-09-03 10:38:44,BLOCKED,469f0761-b3b3-4b1f-97e2-c8197e71babd,high_risk,201,15772.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,a86e0a86-c5dd-44a2-9ada-7d89a544e48e,
+2026-09-03 10:38:44,RECOVERED,9aaf52c6-27d8-4f18-af27-9cb28ca23ef6,standard,201,4573.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,46c4eadc-54b7-4b47-a82e-28eb195fe44e,
+2026-09-03 10:38:44,BLOCKED,0fb8779f-13a5-4b6a-932b-f1a7b3e5cee2,fraud,201,9019.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,970ac913-a007-4c49-a422-189edff79e94,
+2026-09-03 10:38:44,BLOCKED,fd24220f-84bc-4387-b2f2-8b7659c64840,high_risk,201,56332.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,8262a972-00db-4fb6-84fa-090ffd4abd17,
+2026-09-03 10:38:44,BLOCKED,bc1b4171-db1f-4190-a99e-cefc200873b1,high_risk,201,43309.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,6659dc1b-8986-4f1f-a0c6-959874518faf,
+2026-09-03 10:38:44,RECOVERED,85f3bc7a-5261-4a5a-8c3d-923ef5bb52f7,standard,201,8817.0,retry_now,RETRIED,retry_now,False,,APPROVED,d35234de-cea6-42e0-94b0-f169278d2901,
+2026-09-03 10:38:44,BLOCKED,7a1d4cab-59dd-4a73-ab38-612bfe0a487f,high_risk,201,34994.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,5b39cd8a-d3df-4bf2-af89-4c0123cbd148,
+2026-09-03 10:38:44,RECOVERED,4c526df2-461e-4d8b-a9c1-ae7d03b2dc8d,standard,201,5073.0,retry_now,RETRIED,retry_now,False,,APPROVED,394ef6a4-76bb-4f2f-abf3-eac21a61b98a,
+2026-09-03 10:38:44,BLOCKED,7f4d7dc2-2462-4b5d-9f21-9dd32cde9cd3,fraud,201,15474.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,9e8d0245-c387-40e3-8c36-9c88d8677421,
+2026-09-03 10:38:44,RECOVERED,e9132bd4-761c-4159-8f01-098057914e69,standard,201,2464.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,9b3b71b3-8676-4311-b819-190de7c92bf7,
+2026-09-03 10:38:44,BLOCKED,83c53bf5-43cf-4a26-a5f9-b7fe40bf488d,fraud,201,45738.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,bcc4d548-8ef8-4233-acbc-268b0a42e22c,
+2026-09-03 10:38:44,BLOCKED,e319a3cd-16a3-49e6-ae96-b89ced7c5928,fraud,201,8110.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,c631f16a-fb4f-4f97-a128-60283f2ef9a5,
+2026-09-03 10:38:44,RECOVERED,0b5c7fc0-e944-4cf7-ae38-b6d345d32391,standard,201,5136.0,retry_now,RETRIED,retry_now,False,,APPROVED,55971571-4020-4b94-abdb-bac99b1a552c,
+2026-09-03 10:38:44,BLOCKED,22107054-9ef9-4bd0-b258-9a8d7a2d1ca5,high_risk,201,38441.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,559de4ea-25ba-4d95-8432-1f5ca9f4d140,
+2026-09-03 10:38:44,BLOCKED,7806b620-07ac-45c1-92e9-867b2c483d9e,high_risk,201,40769.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,3e76eded-6b4a-4777-b317-d5383bdb2d2f,
+2026-09-03 10:38:44,RECOVERED,5b4844db-b261-4324-a696-9a78a1062a77,standard,201,9940.0,retry_now,RETRIED,retry_now,False,,APPROVED,1f444cb8-c80e-47bb-b176-b975a56df383,
+2026-09-03 10:38:44,BLOCKED,19936334-0c08-4c08-ae3f-e3528a38a13e,fraud,201,8807.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,3b628c95-491f-4ae6-a75e-aa23feda9494,
+2026-09-03 10:38:44,RECOVERED,c4f645c6-7580-45b4-9dd6-99e2b937a6f7,standard,201,1688.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,8216584a-48a8-44e8-8468-1e88d7f33e6f,
+2026-09-03 10:38:44,BLOCKED,1b86ac5a-77d5-4e32-8dd0-e2cc454d5c02,high_risk,201,74777.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,6f73b309-5c19-4315-9b8c-a5d956fdf01f,
+2026-09-03 10:38:44,RECOVERED,f4385e39-beb3-4632-8219-f2b4e7c917b5,standard,201,9169.0,retry_now,RETRIED,retry_now,False,,APPROVED,3ece52de-107d-42c3-9167-12b66f8400a1,
+2026-09-03 10:38:44,BLOCKED,a81953ce-d9e7-48dc-bdeb-be4f6910de13,fraud,201,7600.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,55d3e0c2-2117-4d76-983f-ca3be237dacb,
+2026-09-03 10:38:44,BLOCKED,0c5d7e11-b82b-4f2d-b24f-ba12b2c0d494,high_risk,201,32619.0,escalate_to_human,ESCALATED,retry_now,True,RULE_HIGH_RISK_ESCALATE,APPROVED,4932b340-e41a-476c-8c8d-3c39b57fe284,
+2026-09-03 10:38:44,RECOVERED,f085c3f2-8e81-434d-a8c7-e7b4fdb5542f,standard,201,5611.0,retry_now,RETRIED,retry_now,False,,APPROVED,c218c3e0-f9c6-415a-a9a4-14635d9700da,
+2026-09-03 10:38:44,RECOVERED,e7bcbb11-fa51-4da5-b360-590b4551523b,standard,201,7365.0,retry_now,RETRIED,retry_now,False,,APPROVED,329e6705-63a2-4ad5-9aaa-f8b6d77aa76d,
+2026-09-03 10:38:44,RECOVERED,4f5e5062-cdb5-4c67-a638-e6e0cd3f7bbf,standard,201,3685.0,retry_now,RETRIED,retry_now,False,,APPROVED,8a74e642-11d8-4259-a38c-5efdcd5d9ab8,
+2026-09-03 10:38:44,RECOVERED,24f48d4b-6d18-4524-a988-e2dfa5ff0712,standard,201,7978.0,retry_now,RETRIED,retry_now,False,,APPROVED,6e818c69-d519-4175-ab8c-f872b92d03f4,
+2026-09-03 10:38:44,RECOVERED,15efacfc-f1d6-4f57-8b66-5e5e6d4b7fb7,standard,201,9166.0,retry_now,RETRIED,retry_now,False,,APPROVED,b16cd187-456c-4416-be98-596449bebd1c,
+2026-09-03 10:38:44,BLOCKED,a6ad4f2e-710c-4fbd-ae68-f45240ffb157,fraud,201,4486.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,5b6da15b-de9e-4158-825c-b79cb31c0b19,
+2026-09-03 10:38:44,RECOVERED,73053127-e99a-4486-9b74-ffda2e9fcc89,standard,201,9905.0,retry_now,RETRIED,retry_now,False,,APPROVED,5bc7c69a-90fc-4a30-9d81-6c64c76f14a6,
+2026-09-03 10:38:44,BLOCKED,c9b00b4f-2885-42a6-a43a-3373dc468a21,fraud,201,41989.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,1b3cd4db-27e8-46fc-b096-f21ab96abb5f,
+2026-09-03 10:38:44,BLOCKED,8959a64b-7338-4f91-a253-765789c9ce32,high_risk,201,27502.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,4fc86cb7-03aa-4ca2-aaea-b13bbcb8cb12,
+2026-09-03 10:38:44,BLOCKED,fb838ca2-9da2-4dc9-9931-cb9825094401,fraud,201,44823.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,9ce6d098-73c8-4a0b-aaac-4d6764ca9c90,
+2026-09-03 10:38:44,BLOCKED,2d041560-67f7-4bd1-9a58-be1e2d6936e2,fraud,201,38374.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,dc6c2dec-cca2-4567-9aac-91093b9962ed,
+2026-09-03 10:38:44,BLOCKED,da11e664-d73b-4056-aac6-e28b7421e521,high_risk,201,68911.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,a11f6205-5457-4d1d-8f5b-fe0aa62aa6b5,
+2026-09-03 10:38:44,RECOVERED,c4dc0135-dd8d-4758-9ec4-1e11d8a8681c,standard,201,8488.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,af8b886a-0187-440a-a8d3-f4346a150c38,
+2026-09-03 10:38:44,RECOVERED,30711e0c-4014-4884-b222-a69114529e46,standard,201,1629.0,retry_now,RETRIED,retry_now,False,,APPROVED,fb658f43-3f71-4b76-ba9b-b0366c985faf,
+2026-09-03 10:38:44,RECOVERED,2c2762fa-4eea-4c2a-84ed-54350901ca27,standard,201,2184.0,retry_now,RETRIED,retry_now,False,,APPROVED,70de2223-29b4-4cd8-a519-782578eeefca,
+2026-09-03 10:38:44,BLOCKED,67a61fa7-09d1-4dbc-a6dd-d255869327b2,high_risk,201,61946.0,escalate_to_human,ESCALATED,retry_now,True,RULE_HIGH_RISK_ESCALATE,APPROVED,013d7aeb-97cd-4f24-8c5a-4005488da37e,
+2026-09-03 10:38:44,BLOCKED,dda20e3d-e666-448a-8a44-bf1b1fc25f1d,standard,201,658.0,escalate_to_human,ESCALATED,escalate_to_human,False,,APPROVED,252539a8-61fe-499a-96ad-99ce686b53da,
+2026-09-03 10:38:44,BLOCKED,2b40ec65-77c9-4cb0-9672-9a352a64a145,fraud,201,1899.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,717613a5-83cb-4c11-8e61-9fdaf6a78931,
+2026-09-03 10:38:44,RECOVERED,7f1e6b6b-4605-49d5-8237-629db7a3918f,standard,201,9575.0,retry_now,RETRIED,retry_now,False,,APPROVED,7393743c-25d1-4a33-a840-6499989e9c70,
+2026-09-03 10:38:44,RECOVERED,0a77cbab-517f-4fa1-a3c2-de6318809ef8,standard,201,2271.0,retry_now,RETRIED,retry_now,False,,APPROVED,ea2ec658-7994-4ade-93e9-583f3b0ca6fa,
+2026-09-03 10:38:44,RECOVERED,1413a150-ef74-47cb-a8d2-5331659ca081,standard,201,8439.0,retry_now,RETRIED,retry_now,False,,APPROVED,743e063a-dc76-4919-b896-ea28639f3499,
+2026-09-03 10:38:44,RECOVERED,dffe46d6-5e91-4d0a-9bff-a95284c02606,standard,201,5991.0,retry_now,RETRIED,retry_now,False,,APPROVED,8ffbedbc-1b3c-48cb-9470-a41f498af139,
+2026-09-03 10:38:44,RECOVERED,262a7e4a-30dd-4e9e-9a99-fe8255dc3962,standard,201,2541.0,retry_now,RETRIED,retry_now,False,,APPROVED,909bf55b-764b-463c-a846-5bc08b40953c,
+2026-09-03 10:38:44,RECOVERED,502fd298-2853-4721-a674-4a2ff3b7fdf8,standard,201,3224.0,retry_now,RETRIED,retry_now,False,,APPROVED,0bdc03e4-07df-432f-91ea-63d2be9a2880,
+2026-09-03 10:38:44,RECOVERED,2e3b251a-8564-44cd-b72a-8ae9a292d678,standard,201,6029.0,retry_now,RETRIED,retry_now,False,,APPROVED,ed3b5864-d820-4942-be7d-60233c8c83bd,
+2026-09-03 10:38:44,BLOCKED,49bd3bbf-b53a-4dc9-8773-94ab7ace21d7,fraud,201,12010.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,290d0a0b-d549-47f0-880b-9552e6d9664d,
+2026-09-03 10:38:44,RECOVERED,71289772-c4cc-4763-a8fd-72be655406b7,standard,201,6430.0,retry_now,RETRIED,retry_now,False,,APPROVED,f1c8cd3b-cf7f-48ae-9c77-8129d8ded883,
+2026-09-03 10:38:44,RECOVERED,82adfb84-7828-43ec-b5f1-247c5bce81e6,standard,201,4027.0,retry_now,RETRIED,retry_now,False,,APPROVED,7d944260-c92d-4eb3-9e7e-598cc3890b53,
+2026-09-03 10:38:44,RECOVERED,d88c3956-48bc-412b-8e05-391be695124b,standard,201,6264.0,retry_now,RETRIED,retry_now,False,,APPROVED,88bdaeff-6002-4c79-8115-7a98a76a3837,
+2026-09-03 10:38:44,BLOCKED,a48d6cee-6444-4783-9388-b93bf688f84b,high_risk,201,68290.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,7eebb55f-8490-42e4-9de5-6ddcb6d2f915,
+2026-09-03 10:38:44,RECOVERED,29f37be0-f49c-47f0-9803-dfcea60bf0fd,standard,201,7432.0,retry_now,RETRIED,retry_now,False,,APPROVED,1c296dd1-c5e5-4952-b752-15696475ffb6,
+2026-09-03 10:38:44,RECOVERED,29a983f4-9d2b-4dda-8f98-e4248bb07779,standard,201,5538.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,03434fa7-f056-4185-8d26-b2a540be3010,
+2026-09-03 10:38:44,BLOCKED,26d09fc6-8e4d-407f-b1fc-3073f58e2183,high_risk,201,72067.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_HIGH_RISK_ESCALATE,APPROVED,25fa2750-ff86-4682-bfe4-dbc94b72c467,
+2026-09-03 10:38:44,RECOVERED,73cfd391-943d-48b9-8e17-1911ed4b8304,standard,201,8780.0,retry_now,RETRIED,retry_now,False,,APPROVED,dbfc9c41-e950-4b23-87a7-6889b273a165,
+2026-09-03 10:38:44,BLOCKED,1da6fd12-45f1-4a78-a0f4-dadf1e85c9dd,fraud,201,6609.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,76734f36-a2b2-4e19-b9d1-36a016e9775f,
+2026-09-03 10:38:44,RECOVERED,882aa39b-7772-4d68-9049-6b7a4d561776,standard,201,4082.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,d1a78ef7-234e-49a8-8143-1a1a1042e81f,
+2026-09-03 10:38:44,RECOVERED,75dafe4f-aa1e-4870-b053-9b0c41b03f0a,standard,201,2125.0,retry_now,RETRIED,retry_now,False,,APPROVED,10047d5d-56d7-48e9-8161-8c0e264b703c,
+2026-09-03 10:38:44,RECOVERED,811dd249-7d25-46af-855b-32bda7ff1660,standard,201,5478.0,retry_now,RETRIED,retry_now,False,,APPROVED,3f03358d-fc77-4076-870d-d0121bdd788d,
+2026-09-03 10:38:44,RECOVERED,3aeefb67-5d62-4fc4-aa6e-6f9de00e6fba,standard,201,8541.0,retry_now,RETRIED,retry_now,False,,APPROVED,ecc7c24a-2be6-4558-9a0d-8465f81887db,
+2026-09-03 10:38:44,BLOCKED,0d6775d6-7c6c-4a81-b161-c8add2a198d9,fraud,201,40411.0,escalate_to_human,ESCALATED,escalate_to_human,False,RULE_FRAUD_ESCALATE,APPROVED,3cfe1ea7-21b0-4c8f-a200-c4913649be85,
+2026-09-03 10:38:44,RECOVERED,0322fcf3-6ee9-4cb0-8489-5db2d5907587,standard,201,8879.0,offer_emi,EMI_OFFERED,offer_emi,False,,APPROVED,d240e08a-4d30-44a4-a132-65f72b4ca69a,
+2026-09-03 10:38:44,RECOVERED,75b5afc0-a883-4b3b-8c06-05515de72675,standard,201,1669.0,retry_now,RETRIED,retry_now,False,,APPROVED,9855b893-f89d-432e-b811-bc0b61fea07c,
+2026-09-03 10:38:44,BLOCKED,cd5b7b9d-34ed-426e-9528-ce1dfe379b07,standard,201,2996.0,escalate_to_human,ESCALATED,escalate_to_human,False,,APPROVED,370fa1dd-931f-4c75-88c4-9f06e7781578,
