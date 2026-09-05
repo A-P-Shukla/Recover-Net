@@ -8,7 +8,6 @@ Recover-Net is a high-performance, single-service FastAPI application designed f
 - [System Architecture](architecture.md) (Current)
 - [Usage Guide](usage.md) — Running the stack, payloads, batch runner, and integration patterns
 - [Database Reference](database.md) — PostgreSQL schema, models, indexes, and audit logs
-- [Conversation & Audit Log](../docs/CONVERSATION_LOG.md) — Chronological record of decisions and updates
 - [Project Overview & Quickstart](../README.md) — Root documentation and Stripe-style reference
 
 ---
@@ -67,7 +66,9 @@ Client / Payment Gateway
        transactions + merchant_policies + audit_logs
 ```
 
-The pipeline is orchestrated entirely in `recover_net.engine.pipeline::run_recovery_pipeline()`. Merchant policy is queried before guardrail evaluation; if the merchant is unregistered, the pipeline fails closed. The `Transaction` and `AuditLog` rows are committed atomically at the HTTP boundary. Either both are written or neither is.
+### Database Layer (`src/recover_net/db/`)
+
+See [Database Reference](database.md) for full column schemas and queries.
 
 ---
 
@@ -131,9 +132,14 @@ Pure Python business logic. No hallucinations, no LLM probabilistic drift.
 
 ---
 
-### Database Layer (`src/recover_net/db/`)
+### Batch Processing Engine (`scripts/batch_runner.py`, `scripts/generate_batch.py`)
 
-See [Database Reference](database.md) for full column schemas and queries.
+The batch engine fires concurrent signed webhook requests against the live API, tracking results in real time.
+
+- **`generate_batch.py`** produces 75 synthetic records (60% standard failures, 20% high-value risk, 20% fraud) with `_batch_label` metadata.
+- **`batch_runner.py`** uses `asyncio.gather` + `aiohttp` at `--concurrency 20` (Bedrock ~10,000 RPM — no throttling needed). A Rich `Live` layout updates the decision ledger and live scoreboard in near-real-time as each response arrives. On completion it prints a sorted final ledger and guardrail activity table, then auto-writes `batch_results.csv` (all fields: timestamp, outcome, transaction_id, batch_label, amount, final_intent, final_status, llm_intent, guardrail_overridden, rule_applied, action, audit_log_id, error). Optional JSON export via `--report-json`.
+
+The batch runner signs every request with HMAC-SHA256 using `$WEBHOOK_SECRET`.
 
 - `transactions`: Internal UUID PK, unique `source_transaction_id`, masked `user_email`, masked `phone`, numeric `amount`, `merchant_id`.
 - `merchant_policies`: Merchant-configured policy ceilings (`max_discount_allowed`).
@@ -177,5 +183,4 @@ recover_net.core.app
 ## Cross-Document References
 - [Usage Guide](usage.md)
 - [Database Reference](database.md)
-- [Conversation Log](../docs/CONVERSATION_LOG.md)
 - [Root README](../README.md)

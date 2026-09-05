@@ -8,7 +8,6 @@ This guide covers environment configuration, starting Recover-Net services, auth
 - [Usage Guide](usage.md) (Current)
 - [System Architecture](architecture.md) — Pipeline flow, component boundaries, and security design
 - [Database Reference](database.md) — PostgreSQL schema, models, indexes, and audit logs
-- [Conversation & Audit Log](../docs/CONVERSATION_LOG.md) — Chronological log of changes and decisions
 - [Project Overview & Quickstart](../README.md) — Root documentation and Stripe-style reference
 
 ---
@@ -181,7 +180,8 @@ uv run python scripts/batch_runner.py \
   --url http://localhost:8000 \
   --concurrency 20 \
   --secret your-webhook-secret \
-  --report-json batch_results.json
+  --report-csv results.csv \
+  --report-json results.json
 ```
 
 **Expected throughput**: 75 transactions at `--concurrency 20` complete in roughly 12–20 seconds.
@@ -194,7 +194,10 @@ uv run python scripts/batch_runner.py \
 | `--batch` | `batch_payload.json` | Path to the batch JSON file |
 | `--concurrency` | `20` | Maximum simultaneous in-flight requests |
 | `--secret` | `$WEBHOOK_SECRET` | HMAC-SHA256 signing secret |
+| `--report-csv` | `batch_results.csv` | Path to write CSV results (always written) |
 | `--report-json` | — | Optional path to write full results as JSON |
+
+The live terminal shows a real-time two-panel layout: decision ledger (newest results at the top) and a live scoreboard (recovered/blocked counts, % revenue secured, elapsed time). A static final report is printed after the run completes, sorted RECOVERED → BLOCKED → FAILED.
 
 ---
 
@@ -224,5 +227,4 @@ All 88 tests cover: classifier schemas, PII sanitization, model boundaries, guar
 ## Cross-Document References
 - [System Architecture](architecture.md)
 - [Database Reference](database.md)
-- [Conversation Log](../docs/CONVERSATION_LOG.md)
 - [Root README](../README.md)

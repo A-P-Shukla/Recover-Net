@@ -8,7 +8,6 @@ Recover-Net uses PostgreSQL 16 (or SQLite in transactional test environments). T
 - [Database Reference](database.md) (Current)
 - [System Architecture](architecture.md) — Pipeline flow, component boundaries, and security design
 - [Usage Guide](usage.md) — Endpoint requests, HMAC signing, batch processing, and testing
-- [Conversation & Audit Log](../docs/CONVERSATION_LOG.md) — Chronological log of changes and decisions
 - [Project Overview & Quickstart](../README.md) — Root documentation and Stripe-style reference
 
 ---
@@ -159,5 +158,4 @@ ORDER BY trigger_count DESC;
 ## Cross-Document References
 - [Usage Guide](usage.md)
 - [System Architecture](architecture.md)
-- [Conversation Log](../docs/CONVERSATION_LOG.md)
 - [Root README](../README.md)
